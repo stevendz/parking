@@ -16,6 +16,7 @@ class MyApp extends StatelessWidget {
   }
 }
 
+// VErsion
 class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -23,7 +24,7 @@ class HomePage extends StatelessWidget {
       child: GoogleMap(
         initialCameraPosition: CameraPosition(
           target: LatLng(53.5644297, 10.0502048),
-          zoom: 14.4746,
+          zoom: 14,
         ),
       ),
     );
