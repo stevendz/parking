@@ -23,7 +23,7 @@ jobs:
           git config --global user.email steven.dzionara@gmail.com
           git config --global user.name stevendz
           git status
-          git remote add origin https://${{secrets.commit_secret}}@github.com:stevendz/parking.git
+          git remote add origin https://${{secrets.commit_secret}}@github.com/stevendz/parking.git
           git checkout -b gh-pages
           git add --all
           git commit -m "update"
