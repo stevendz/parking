@@ -7,10 +7,14 @@ class AuthScreen extends StatelessWidget {
   final nameController = TextEditingController();
   final passwordController = TextEditingController();
   void signin() async {
-    var user = await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: nameController.text, password: passwordController.text);
-    if (user != null) {
-      Get.to(MapScreen());
+    try {
+      var user = await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: nameController.text, password: passwordController.text);
+      if (user != null) {
+        Get.to(MapScreen());
+      }
+    } catch (e) {
+      print(e);
     }
   }
 
