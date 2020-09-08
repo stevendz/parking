@@ -11,6 +11,12 @@ class MapScreen extends StatefulWidget {
 class _MapScreenState extends State<MapScreen> {
   Position position = Position(latitude: 58.5638133, longitude: 18.0425983);
   String locationText = 'Please choose location...';
+  User user;
+  initState() {
+    super.initState();
+    user = FirebaseAuth.instance.currentUser;
+  }
+
   getLocation() async {
     try {
       Position position = await Geolocator()
@@ -31,7 +37,6 @@ class _MapScreenState extends State<MapScreen> {
           ),
         );
       }
-      print(FirebaseAuth.instance.currentUser);
     } catch (e) {
       print(e);
     }
@@ -89,6 +94,11 @@ class _MapScreenState extends State<MapScreen> {
     ];
     return SafeArea(
       child: Scaffold(
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          centerTitle: true,
+          title: Text(user != null ? user.email : 'Guest'),
+        ),
         body: Column(
           children: [
             Expanded(

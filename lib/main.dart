@@ -17,7 +17,9 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Parking',
-      theme: ThemeData(),
+      theme: ThemeData(
+        primarySwatch: Colors.lightGreen,
+      ),
       home: AuthScreen(),
     );
   }
