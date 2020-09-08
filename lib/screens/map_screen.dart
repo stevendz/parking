@@ -10,8 +10,8 @@ class MapScreen extends StatefulWidget {
 
 class _MapScreenState extends State<MapScreen> {
   Position position = Position(latitude: 58.5638133, longitude: 18.0425983);
-  String locationText = 'Please choose location...';
   User user;
+
   initState() {
     super.initState();
     user = FirebaseAuth.instance.currentUser;

@@ -27,32 +27,45 @@ class _AuthScreenState extends State<AuthScreen> {
       UserCredential user = await FirebaseAuth.instance
           .signInWithEmailAndPassword(
               email: nameController.text, password: passwordController.text);
-      // if (user != null) {
-      //   Get.to(MapScreen());
-      // }
+      if (user != null) {
+        Get.to(MapScreen());
+      }
     } catch (error) {
       print(error);
       switch (error.code) {
-        case "ERROR_INVALID_EMAIL":
+        case "invalid-email":
+          setState(() {});
           errorMessage = "Your email address appears to be malformed.";
           break;
         case "wrong-password":
-          errorMessage = "Your password is wrong.";
+          setState(() {
+            errorMessage = "Your password is wrong.";
+          });
           break;
-        case "ERROR_USER_NOT_FOUND":
-          errorMessage = "User with this email doesn't exist.";
+        case "user-not-found":
+          setState(() {
+            errorMessage = "User with this email doesn't exist.";
+          });
           break;
-        case "ERROR_USER_DISABLED":
-          errorMessage = "User with this email has been disabled.";
+        case "user-disabled":
+          setState(() {
+            errorMessage = "User with this email has been disabled.";
+          });
           break;
-        case "ERROR_TOO_MANY_REQUESTS":
-          errorMessage = "Too many requests. Try again later.";
+        case "too-many-requests":
+          setState(() {
+            errorMessage = "Too many requests. Try again later.";
+          });
           break;
-        case "ERROR_OPERATION_NOT_ALLOWED":
-          errorMessage = "Signing in with Email and Password is not enabled.";
+        case "operation-not-allowed":
+          setState(() {
+            errorMessage = "Signing in with Email and Password is not enabled.";
+          });
           break;
         default:
-          errorMessage = "An undefined Error happened.";
+          setState(() {
+            errorMessage = "An undefined Error happened.";
+          });
       }
     }
   }
