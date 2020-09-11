@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class SlotMarker extends StatelessWidget {
-  final slot;
+  final Map slot;
 
   const SlotMarker({Key key, this.slot}) : super(key: key);
   @override
@@ -14,7 +14,7 @@ class SlotMarker extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(slot.data()["title"]),
+              Text(slot["title"]),
               GestureDetector(
                 child: Icon(
                   Icons.cancel,
@@ -45,14 +45,14 @@ class SlotMarker extends StatelessWidget {
             children: [
               Text(
                 'hourly: ' +
-                    (slot.data()["hourly"] != null
-                        ? (slot.data()["hourly"].toString() + '€')
+                    (slot["hourly"] != null
+                        ? (slot["hourly"].toString() + '€')
                         : '-'),
               ),
               Text(
                 'daily: ' +
-                    (slot.data()["daily"] != null
-                        ? (slot.data()["daily"].toString() + '€')
+                    (slot["daily"] != null
+                        ? (slot["daily"].toString() + '€')
                         : '-'),
               ),
             ],

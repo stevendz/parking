@@ -39,7 +39,7 @@ class _MapScreenState extends State<MapScreen> {
                     onTap: () {
                       showDialog(
                         context: context,
-                        builder: (context) => SlotMarker(slot: slot),
+                        builder: (context) => SlotMarker(slot: slot.data()),
                       );
                     },
                   ),
