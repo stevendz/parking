@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:parking/screens/map_screen.dart';
 import 'package:get/get.dart';
+import 'package:parking/services/exception_handler.dart';
 
 class AuthScreen extends StatefulWidget {
   @override
@@ -30,43 +31,9 @@ class _AuthScreenState extends State<AuthScreen> {
         Get.off(MapScreen());
       }
     } catch (error) {
-      print(error);
-      switch (error.code) {
-        case "invalid-email":
-          setState(() {
-            errorMessage = "Your email address appears to be malformed.";
-          });
-          break;
-        case "wrong-password":
-          setState(() {
-            errorMessage = "Your password is wrong.";
-          });
-          break;
-        case "user-not-found":
-          setState(() {
-            errorMessage = "User with this email doesn't exist.";
-          });
-          break;
-        case "user-disabled":
-          setState(() {
-            errorMessage = "User with this email has been disabled.";
-          });
-          break;
-        case "too-many-requests":
-          setState(() {
-            errorMessage = "Too many requests. Try again later.";
-          });
-          break;
-        case "operation-not-allowed":
-          setState(() {
-            errorMessage = "Signing in with Email and Password is not enabled.";
-          });
-          break;
-        default:
-          setState(() {
-            errorMessage = "An undefined Error happened.";
-          });
-      }
+      setState(() {
+        errorMessage = signinExceptionMessage(error.code);
+      });
     }
   }
 
@@ -86,39 +53,9 @@ class _AuthScreenState extends State<AuthScreen> {
         Get.off(MapScreen());
       }
     } catch (error) {
-      print(error.code);
-      switch (error.code) {
-        case "operation-not-allowed":
-          setState(() {
-            errorMessage = "Anonymous accounts are not enabled";
-          });
-          break;
-        case "weak-password":
-          setState(() {
-            errorMessage = "Your password is too weak";
-          });
-          break;
-        case "invalid-email":
-          setState(() {
-            errorMessage = "Your email is invalid";
-          });
-          break;
-        case "email-already-in-use":
-          setState(() {
-            errorMessage = "Email is already in use on different account";
-          });
-          break;
-        case "invalid-credential":
-          setState(() {
-            errorMessage = "Your email is invalid";
-          });
-          break;
-
-        default:
-          setState(() {
-            errorMessage = "An undefined Error happened.";
-          });
-      }
+      setState(() {
+        errorMessage = sigupExceptionMessage(error.code);
+      });
     }
   }
 
@@ -133,6 +70,7 @@ class _AuthScreenState extends State<AuthScreen> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
+                    Spacer(),
                     TextFormField(
                       controller: nameController,
                     ),
@@ -152,6 +90,23 @@ class _AuthScreenState extends State<AuthScreen> {
                       },
                       child: Text(isSignUp ? 'Register' : 'Login'),
                     ),
+                    // Admin login-button for debugging
+                    FlatButton(
+                      color: Colors.grey.shade300,
+                      onPressed: () async {
+                        UserCredential user = await FirebaseAuth.instance
+                            .signInWithEmailAndPassword(
+                                email: 'admin@gmail.com', password: '123456');
+                        if (user != null) {
+                          Get.off(MapScreen());
+                        }
+                      },
+                      child: Text(
+                        'admin login',
+                        style: TextStyle(fontSize: 12),
+                      ),
+                    ),
+                    Spacer(),
                     FlatButton(
                       color: Theme.of(context).primaryColorLight,
                       onPressed: () {

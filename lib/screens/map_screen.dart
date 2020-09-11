@@ -6,7 +6,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:parking/screens/auth_screen.dart';
-import 'package:parking/widgets/slot_marker.dart';
+import 'package:parking/widgets/slot_alert_dialog.dart';
 
 class MapScreen extends StatefulWidget {
   @override
@@ -19,7 +19,7 @@ class _MapScreenState extends State<MapScreen> {
       longitude: 18.0425983); //Random position for debugging
   User user;
   List<Marker> markers = [];
-  CollectionReference slots = FirebaseFirestore.instance.collection('slots');
+  CollectionReference slotsDb = FirebaseFirestore.instance.collection('slots');
 
   initState() {
     super.initState();
@@ -28,7 +28,7 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   loadSlots() {
-    slots.get().then(
+    slotsDb.get().then(
           (QuerySnapshot querySnapshot) => {
             querySnapshot.docs.forEach(
               (slot) {
@@ -42,7 +42,9 @@ class _MapScreenState extends State<MapScreen> {
                     onTap: () {
                       showDialog(
                         context: context,
-                        builder: (context) => SlotMarker(slot: slot.data()),
+                        builder: (context) => SlotAlertDialog(
+                          slot: slot.data(),
+                        ),
                       );
                     },
                   ),
@@ -79,13 +81,6 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   GoogleMapController mapController;
-
-  void _showSnackBar(BuildContext context, String message) {
-    Scaffold.of(context).showSnackBar(SnackBar(
-      content: Text(message),
-      duration: const Duration(milliseconds: 1000),
-    ));
-  }
 
   @override
   Widget build(BuildContext context) {
