@@ -28,7 +28,7 @@ class _AuthScreenState extends State<AuthScreen> {
           .signInWithEmailAndPassword(
               email: nameController.text, password: passwordController.text);
       if (user != null) {
-        Get.to(MapScreen());
+        Get.off(MapScreen());
       }
     } catch (error) {
       print(error);

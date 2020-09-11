@@ -3,7 +3,9 @@ import 'package:fab_circular_menu/fab_circular_menu.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:parking/screens/auth_screen.dart';
 import 'package:parking/widgets/slot_marker.dart';
 
 class MapScreen extends StatefulWidget {
@@ -93,8 +95,6 @@ class _MapScreenState extends State<MapScreen> {
           automaticallyImplyLeading: false,
           centerTitle: true,
           title: Text(user != null ? user.email : 'Guest'),
-          leading:
-              IconButton(icon: Icon(Icons.gps_fixed), onPressed: getLocation),
         ),
         body: GoogleMap(
           onMapCreated: (GoogleMapController controller) {
@@ -119,7 +119,10 @@ class _MapScreenState extends State<MapScreen> {
             children: <Widget>[
               RawMaterialButton(
                 elevation: 0,
-                onPressed: () {},
+                onPressed: () {
+                  FirebaseAuth.instance.signOut();
+                  Get.off(AuthScreen());
+                },
                 fillColor: Theme.of(context).primaryColorLight,
                 shape: CircleBorder(),
                 child: Icon(Icons.person),
@@ -137,6 +140,13 @@ class _MapScreenState extends State<MapScreen> {
                 fillColor: Theme.of(context).primaryColorLight,
                 shape: CircleBorder(),
                 child: Icon(Icons.search),
+              ),
+              RawMaterialButton(
+                elevation: 0,
+                onPressed: getLocation,
+                fillColor: Theme.of(context).primaryColorLight,
+                shape: CircleBorder(),
+                child: Icon(Icons.room),
               ),
             ],
           ),
