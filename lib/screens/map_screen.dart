@@ -53,7 +53,7 @@ class _MapScreenState extends State<MapScreen> {
         );
   }
 
-  getLocation() async {
+  moveToLocation() async {
     try {
       Position position = await Geolocator()
           .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
@@ -99,7 +99,7 @@ class _MapScreenState extends State<MapScreen> {
             zoom: 14,
           ),
         ),
-        floatingActionButton: FabMenu(getLocation: getLocation),
+        floatingActionButton: FabMenu(moveToLocation: moveToLocation),
       ),
     );
   }

@@ -5,10 +5,10 @@ import 'package:get/get.dart';
 import 'package:parking/screens/auth_screen.dart';
 
 class FabMenu extends StatelessWidget {
-  final Function getLocation;
+  final Function moveToLocation;
   const FabMenu({
     Key key,
-    @required this.getLocation,
+    @required this.moveToLocation,
   }) : super(key: key);
 
   @override
@@ -49,7 +49,7 @@ class FabMenu extends StatelessWidget {
         ),
         RawMaterialButton(
           elevation: 0,
-          onPressed: getLocation,
+          onPressed: moveToLocation,
           fillColor: Theme.of(context).primaryColorLight,
           shape: CircleBorder(),
           child: Icon(Icons.room),
