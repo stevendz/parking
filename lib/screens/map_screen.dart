@@ -1,12 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:fab_circular_menu/fab_circular_menu.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:parking/screens/auth_screen.dart';
-import 'package:parking/widgets/slot_marker.dart';
+import 'package:parking/widgets/fab_menu.dart';
+import 'package:parking/widgets/slot_alert_dialog.dart';
 
 class MapScreen extends StatefulWidget {
   @override
@@ -19,7 +17,7 @@ class _MapScreenState extends State<MapScreen> {
       longitude: 18.0425983); //Random position for debugging
   User user;
   List<Marker> markers = [];
-  CollectionReference slots = FirebaseFirestore.instance.collection('slots');
+  CollectionReference slotsDb = FirebaseFirestore.instance.collection('slots');
 
   initState() {
     super.initState();
@@ -28,7 +26,7 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   loadSlots() {
-    slots.get().then(
+    slotsDb.get().then(
           (QuerySnapshot querySnapshot) => {
             querySnapshot.docs.forEach(
               (slot) {
@@ -42,7 +40,9 @@ class _MapScreenState extends State<MapScreen> {
                     onTap: () {
                       showDialog(
                         context: context,
-                        builder: (context) => SlotMarker(slot: slot.data()),
+                        builder: (context) => SlotAlertDialog(
+                          slot: slot.data(),
+                        ),
                       );
                     },
                   ),
@@ -53,7 +53,7 @@ class _MapScreenState extends State<MapScreen> {
         );
   }
 
-  getLocation() async {
+  moveToLocation() async {
     try {
       Position position = await Geolocator()
           .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
@@ -80,13 +80,6 @@ class _MapScreenState extends State<MapScreen> {
 
   GoogleMapController mapController;
 
-  void _showSnackBar(BuildContext context, String message) {
-    Scaffold.of(context).showSnackBar(SnackBar(
-      content: Text(message),
-      duration: const Duration(milliseconds: 1000),
-    ));
-  }
-
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -106,51 +99,7 @@ class _MapScreenState extends State<MapScreen> {
             zoom: 14,
           ),
         ),
-        floatingActionButton: Builder(
-          builder: (context) => FabCircularMenu(
-            alignment: Alignment.bottomLeft,
-            ringColor: Colors.black.withAlpha(25),
-            ringDiameter: 300.0,
-            ringWidth: 60,
-            fabSize: 50.0,
-            fabColor: Theme.of(context).primaryColor,
-            fabOpenIcon: Icon(Icons.menu, color: Colors.black),
-            fabCloseIcon: Icon(Icons.close, color: Colors.black),
-            children: <Widget>[
-              RawMaterialButton(
-                elevation: 0,
-                onPressed: () async {
-                  await FirebaseAuth.instance.signOut();
-                  Get.off(AuthScreen());
-                },
-                fillColor: Theme.of(context).primaryColorLight,
-                shape: CircleBorder(),
-                child: Icon(Icons.person),
-              ),
-              RawMaterialButton(
-                elevation: 0,
-                onPressed: () {},
-                fillColor: Theme.of(context).primaryColorLight,
-                shape: CircleBorder(),
-                child: Icon(Icons.chat),
-              ),
-              RawMaterialButton(
-                elevation: 0,
-                onPressed: () {},
-                fillColor: Theme.of(context).primaryColorLight,
-                shape: CircleBorder(),
-                child: Icon(Icons.search),
-              ),
-              RawMaterialButton(
-                elevation: 0,
-                onPressed: getLocation,
-                fillColor: Theme.of(context).primaryColorLight,
-                shape: CircleBorder(),
-                child: Icon(Icons.room),
-              ),
-            ],
-          ),
-        ),
+        floatingActionButton: FabMenu(moveToLocation: moveToLocation),
       ),
     );
   }

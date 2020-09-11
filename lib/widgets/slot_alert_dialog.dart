@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 
-class SlotMarker extends StatefulWidget {
+class SlotAlertDialog extends StatefulWidget {
   final Map slot;
 
-  const SlotMarker({Key key, this.slot}) : super(key: key);
+  const SlotAlertDialog({Key key, this.slot}) : super(key: key);
 
   @override
-  _SlotMarkerState createState() => _SlotMarkerState();
+  _SlotAlertDialogState createState() => _SlotAlertDialogState();
 }
 
-class _SlotMarkerState extends State<SlotMarker> {
+class _SlotAlertDialogState extends State<SlotAlertDialog> {
   String location = '';
   getLocation() async {
     List<Placemark> placemarks = await Geolocator().placemarkFromCoordinates(
