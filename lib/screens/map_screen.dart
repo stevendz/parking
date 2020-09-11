@@ -119,8 +119,8 @@ class _MapScreenState extends State<MapScreen> {
             children: <Widget>[
               RawMaterialButton(
                 elevation: 0,
-                onPressed: () {
-                  FirebaseAuth.instance.signOut();
+                onPressed: () async {
+                  await FirebaseAuth.instance.signOut();
                   Get.off(AuthScreen());
                 },
                 fillColor: Theme.of(context).primaryColorLight,

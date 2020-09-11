@@ -10,9 +10,8 @@ class AuthScreen extends StatefulWidget {
 
 class _AuthScreenState extends State<AuthScreen> {
   final nameController = TextEditingController();
-
   final passwordController = TextEditingController();
-
+  bool isSignUp = true;
   String errorMessage = '';
 
   void signin() async {
@@ -34,8 +33,9 @@ class _AuthScreenState extends State<AuthScreen> {
       print(error);
       switch (error.code) {
         case "invalid-email":
-          setState(() {});
-          errorMessage = "Your email address appears to be malformed.";
+          setState(() {
+            errorMessage = "Your email address appears to be malformed.";
+          });
           break;
         case "wrong-password":
           setState(() {
@@ -70,6 +70,58 @@ class _AuthScreenState extends State<AuthScreen> {
     }
   }
 
+  void signup() async {
+    try {
+      if (nameController.text.trim().length < 6 ||
+          passwordController.text.trim().length < 3) {
+        setState(() {
+          errorMessage = 'Email or Password too short';
+        });
+        return;
+      }
+      UserCredential user = await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(
+              email: nameController.text, password: passwordController.text);
+      if (user != null) {
+        Get.off(MapScreen());
+      }
+    } catch (error) {
+      print(error.code);
+      switch (error.code) {
+        case "operation-not-allowed":
+          setState(() {
+            errorMessage = "Anonymous accounts are not enabled";
+          });
+          break;
+        case "weak-password":
+          setState(() {
+            errorMessage = "Your password is too weak";
+          });
+          break;
+        case "invalid-email":
+          setState(() {
+            errorMessage = "Your email is invalid";
+          });
+          break;
+        case "email-already-in-use":
+          setState(() {
+            errorMessage = "Email is already in use on different account";
+          });
+          break;
+        case "invalid-credential":
+          setState(() {
+            errorMessage = "Your email is invalid";
+          });
+          break;
+
+        default:
+          setState(() {
+            errorMessage = "An undefined Error happened.";
+          });
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return FirebaseAuth.instance.currentUser != null
@@ -88,15 +140,30 @@ class _AuthScreenState extends State<AuthScreen> {
                       obscureText: true,
                       controller: passwordController,
                     ),
-                    FlatButton(
-                      onPressed: () {
-                        print('Name: ' + nameController.text);
-                        print('Password: ' + passwordController.text);
-                        signin();
-                      },
-                      child: Text('Login'),
+                    SizedBox(height: 20),
+                    Text(
+                      errorMessage,
+                      style: TextStyle(color: Colors.redAccent),
                     ),
-                    Text(errorMessage),
+                    FlatButton(
+                      color: Theme.of(context).primaryColor,
+                      onPressed: () {
+                        isSignUp ? signup() : signin();
+                      },
+                      child: Text(isSignUp ? 'Register' : 'Login'),
+                    ),
+                    FlatButton(
+                      color: Theme.of(context).primaryColorLight,
+                      onPressed: () {
+                        setState(() {
+                          errorMessage = '';
+                          isSignUp = !isSignUp;
+                        });
+                      },
+                      child: Text(isSignUp
+                          ? 'Already an user? Login!'
+                          : 'No account? Register!'),
+                    ),
                   ],
                 ),
               ),
