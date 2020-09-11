@@ -96,7 +96,9 @@ class _AuthScreenState extends State<AuthScreen> {
                       onPressed: () async {
                         UserCredential user = await FirebaseAuth.instance
                             .signInWithEmailAndPassword(
-                                email: 'admin@gmail.com', password: '123456');
+                          email: 'admin@gmail.com',
+                          password: '123456',
+                        );
                         if (user != null) {
                           Get.off(MapScreen());
                         }
@@ -115,9 +117,11 @@ class _AuthScreenState extends State<AuthScreen> {
                           isSignUp = !isSignUp;
                         });
                       },
-                      child: Text(isSignUp
-                          ? 'Already an user? Login!'
-                          : 'No account? Register!'),
+                      child: Text(
+                        isSignUp
+                            ? 'Already an user? Login!'
+                            : 'No account? Register!',
+                      ),
                     ),
                   ],
                 ),
