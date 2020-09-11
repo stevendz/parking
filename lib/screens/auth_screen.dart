@@ -33,8 +33,9 @@ class _AuthScreenState extends State<AuthScreen> {
       print(error);
       switch (error.code) {
         case "invalid-email":
-          setState(() {});
-          errorMessage = "Your email address appears to be malformed.";
+          setState(() {
+            errorMessage = "Your email address appears to be malformed.";
+          });
           break;
         case "wrong-password":
           setState(() {
@@ -72,7 +73,7 @@ class _AuthScreenState extends State<AuthScreen> {
   void signup() async {
     try {
       if (nameController.text.trim().length < 6 ||
-          passwordController.text.trim().length < 6) {
+          passwordController.text.trim().length < 3) {
         setState(() {
           errorMessage = 'Email or Password too short';
         });
@@ -85,9 +86,39 @@ class _AuthScreenState extends State<AuthScreen> {
         Get.off(MapScreen());
       }
     } catch (error) {
-      setState(() {
-        errorMessage = error.code;
-      });
+      print(error.code);
+      switch (error.code) {
+        case "operation-not-allowed":
+          setState(() {
+            errorMessage = "Anonymous accounts are not enabled";
+          });
+          break;
+        case "weak-password":
+          setState(() {
+            errorMessage = "Your password is too weak";
+          });
+          break;
+        case "invalid-email":
+          setState(() {
+            errorMessage = "Your email is invalid";
+          });
+          break;
+        case "email-already-in-use":
+          setState(() {
+            errorMessage = "Email is already in use on different account";
+          });
+          break;
+        case "invalid-credential":
+          setState(() {
+            errorMessage = "Your email is invalid";
+          });
+          break;
+
+        default:
+          setState(() {
+            errorMessage = "An undefined Error happened.";
+          });
+      }
     }
   }
 
