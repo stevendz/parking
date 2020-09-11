@@ -15,6 +15,7 @@ dependencies:
   geolocator: ^4.0.3
   firebase_core: 
   firebase_auth: 
+  cloud_firestore:
   get: ^3.8.0
 
 dev_dependencies:
