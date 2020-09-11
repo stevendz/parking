@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:parking/widgets/slot_marker.dart';
 
 class MapScreen extends StatefulWidget {
   @override
@@ -32,13 +33,13 @@ class _MapScreenState extends State<MapScreen> {
                   Marker(
                     markerId: MarkerId(slot.id),
                     position: LatLng(
-                        slot.data()["latitude"], slot.data()["longitude"]),
+                      slot.data()["latitude"],
+                      slot.data()["longitude"],
+                    ),
                     onTap: () {
                       showDialog(
                         context: context,
-                        builder: (context) => AlertDialog(
-                          title: Text(slot.data()["title"]),
-                        ),
+                        builder: (context) => SlotMarker(slot: slot.data()),
                       );
                     },
                   ),
