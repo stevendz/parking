@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
@@ -11,10 +12,29 @@ class MapScreen extends StatefulWidget {
 class _MapScreenState extends State<MapScreen> {
   Position position = Position(latitude: 58.5638133, longitude: 18.0425983);
   User user;
+  List<Marker> markersDb = [];
+  CollectionReference slots = FirebaseFirestore.instance.collection('slots');
 
   initState() {
     super.initState();
     user = FirebaseAuth.instance.currentUser;
+
+    slots.get().then((QuerySnapshot querySnapshot) => {
+          querySnapshot.docs.forEach((slot) {
+            markersDb.add(Marker(
+                markerId: MarkerId(slot.id),
+                position:
+                    LatLng(slot.data()["latitude"], slot.data()["longitude"]),
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: Text(slot.data()["title"]),
+                    ),
+                  );
+                }));
+          })
+        });
   }
 
   getLocation() async {
@@ -46,52 +66,6 @@ class _MapScreenState extends State<MapScreen> {
 
   @override
   Widget build(BuildContext context) {
-    List<Marker> markers = [
-      Marker(
-          markerId: MarkerId('slot1'),
-          position: LatLng(53.5644297, 10.0502048),
-          onTap: () {
-            showDialog(
-              context: context,
-              builder: (context) => AlertDialog(
-                title: Text('slot1'),
-              ),
-            );
-          }),
-      Marker(
-          markerId: MarkerId('slot2'),
-          position: LatLng(53.5694297, 10.0602048),
-          onTap: () {
-            showDialog(
-              context: context,
-              builder: (context) => AlertDialog(
-                title: Text('slot2'),
-              ),
-            );
-          }),
-      Marker(
-          markerId: MarkerId('slot3'),
-          position: LatLng(53.5584297, 10.0552048),
-          onTap: () {
-            showDialog(
-              context: context,
-              builder: (context) => AlertDialog(
-                title: Text('slot3'),
-              ),
-            );
-          }),
-      Marker(
-          markerId: MarkerId('slot4'),
-          position: LatLng(53.5554297, 10.0352048),
-          onTap: () {
-            showDialog(
-              context: context,
-              builder: (context) => AlertDialog(
-                title: Text('slot4'),
-              ),
-            );
-          }),
-    ];
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -99,21 +73,15 @@ class _MapScreenState extends State<MapScreen> {
           centerTitle: true,
           title: Text(user != null ? user.email : 'Guest'),
         ),
-        body: Column(
-          children: [
-            Expanded(
-              child: GoogleMap(
-                onMapCreated: (GoogleMapController controller) {
-                  mapController = controller;
-                },
-                markers: Set.from(markers),
-                initialCameraPosition: CameraPosition(
-                  target: LatLng(position.latitude, position.longitude),
-                  zoom: 14,
-                ),
-              ),
-            ),
-          ],
+        body: GoogleMap(
+          onMapCreated: (GoogleMapController controller) {
+            mapController = controller;
+          },
+          markers: Set.from(markersDb),
+          initialCameraPosition: CameraPosition(
+            target: LatLng(position.latitude, position.longitude),
+            zoom: 14,
+          ),
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
         floatingActionButton: FloatingActionButton(
