@@ -1,9 +1,35 @@
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 
-class SlotMarker extends StatelessWidget {
+class SlotMarker extends StatefulWidget {
   final Map slot;
 
   const SlotMarker({Key key, this.slot}) : super(key: key);
+
+  @override
+  _SlotMarkerState createState() => _SlotMarkerState();
+}
+
+class _SlotMarkerState extends State<SlotMarker> {
+  String location = '';
+  getLocation() async {
+    List<Placemark> placemarks = await Geolocator().placemarkFromCoordinates(
+        widget.slot["latitude"], widget.slot["longitude"]);
+    setState(() {
+      location = placemarks[0].thoroughfare +
+          ', ' +
+          placemarks[0].postalCode +
+          ', ' +
+          placemarks[0].locality;
+    });
+  }
+
+  @override
+  void initState() {
+    getLocation();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -14,7 +40,7 @@ class SlotMarker extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(slot["title"]),
+              Expanded(child: Text(location)),
               GestureDetector(
                 child: Icon(
                   Icons.cancel,
@@ -45,14 +71,14 @@ class SlotMarker extends StatelessWidget {
             children: [
               Text(
                 'hourly: ' +
-                    (slot["hourly"] != null
-                        ? (slot["hourly"].toString() + '€')
+                    (widget.slot["hourly"] != null
+                        ? (widget.slot["hourly"].toString() + '€')
                         : '-'),
               ),
               Text(
                 'daily: ' +
-                    (slot["daily"] != null
-                        ? (slot["daily"].toString() + '€')
+                    (widget.slot["daily"] != null
+                        ? (widget.slot["daily"].toString() + '€')
                         : '-'),
               ),
             ],

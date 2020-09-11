@@ -72,33 +72,35 @@ class _AuthScreenState extends State<AuthScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        body: Padding(
-          padding: EdgeInsets.all(20),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              TextFormField(
-                controller: nameController,
+    return FirebaseAuth.instance.currentUser != null
+        ? MapScreen()
+        : SafeArea(
+            child: Scaffold(
+              body: Padding(
+                padding: EdgeInsets.all(20),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    TextFormField(
+                      controller: nameController,
+                    ),
+                    TextFormField(
+                      obscureText: true,
+                      controller: passwordController,
+                    ),
+                    FlatButton(
+                      onPressed: () {
+                        print('Name: ' + nameController.text);
+                        print('Password: ' + passwordController.text);
+                        signin();
+                      },
+                      child: Text('Login'),
+                    ),
+                    Text(errorMessage),
+                  ],
+                ),
               ),
-              TextFormField(
-                obscureText: true,
-                controller: passwordController,
-              ),
-              FlatButton(
-                onPressed: () {
-                  print('Name: ' + nameController.text);
-                  print('Password: ' + passwordController.text);
-                  signin();
-                },
-                child: Text('Login'),
-              ),
-              Text(errorMessage),
-            ],
-          ),
-        ),
-      ),
-    );
+            ),
+          );
   }
 }
