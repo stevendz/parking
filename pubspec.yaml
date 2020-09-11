@@ -17,6 +17,7 @@ dependencies:
   firebase_auth: 
   cloud_firestore:
   get: ^3.8.0
+  fab_circular_menu: ^1.0.0
 
 dev_dependencies:
   flutter_test:
