@@ -10,31 +10,43 @@ class MapScreen extends StatefulWidget {
 }
 
 class _MapScreenState extends State<MapScreen> {
-  Position position = Position(latitude: 58.5638133, longitude: 18.0425983);
+  Position position = Position(
+      latitude: 58.5638133,
+      longitude: 18.0425983); //Random position for debugging
   User user;
-  List<Marker> markersDb = [];
+  List<Marker> markers = [];
   CollectionReference slots = FirebaseFirestore.instance.collection('slots');
 
   initState() {
     super.initState();
     user = FirebaseAuth.instance.currentUser;
+    loadSlots();
+  }
 
-    slots.get().then((QuerySnapshot querySnapshot) => {
-          querySnapshot.docs.forEach((slot) {
-            markersDb.add(Marker(
-                markerId: MarkerId(slot.id),
-                position:
-                    LatLng(slot.data()["latitude"], slot.data()["longitude"]),
-                onTap: () {
-                  showDialog(
-                    context: context,
-                    builder: (context) => AlertDialog(
-                      title: Text(slot.data()["title"]),
-                    ),
-                  );
-                }));
-          })
-        });
+  loadSlots() {
+    slots.get().then(
+          (QuerySnapshot querySnapshot) => {
+            querySnapshot.docs.forEach(
+              (slot) {
+                markers.add(
+                  Marker(
+                    markerId: MarkerId(slot.id),
+                    position: LatLng(
+                        slot.data()["latitude"], slot.data()["longitude"]),
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: Text(slot.data()["title"]),
+                        ),
+                      );
+                    },
+                  ),
+                );
+              },
+            )
+          },
+        );
   }
 
   getLocation() async {
@@ -77,7 +89,7 @@ class _MapScreenState extends State<MapScreen> {
           onMapCreated: (GoogleMapController controller) {
             mapController = controller;
           },
-          markers: Set.from(markersDb),
+          markers: Set.from(markers),
           initialCameraPosition: CameraPosition(
             target: LatLng(position.latitude, position.longitude),
             zoom: 14,
