@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:parking/screens/auth_screen.dart';
@@ -12,7 +15,6 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   PickedFile newImage;
-  final picker = ImagePicker();
   User user;
   initState() {
     super.initState();
@@ -21,6 +23,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    StorageReference imgStorage = FirebaseStorage.instance.ref();
     CollectionReference usersDb =
         FirebaseFirestore.instance.collection('users');
     return FutureBuilder<DocumentSnapshot>(
@@ -44,9 +47,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   children: [
                     GestureDetector(
                       onTap: () async {
-                        print('tapped');
-                        final pickedImage =
-                            await picker.getImage(source: ImageSource.gallery);
+                        PickedFile pickedImage = await ImagePicker()
+                            .getImage(source: ImageSource.gallery);
+                        StorageReference reference =
+                            imgStorage.child(user.email + '_avatar');
+                        StorageUploadTask storageUploadTask =
+                            reference.putFile(File(pickedImage.path));
+
+                        await reference.getDownloadURL().then(
+                              (url) => setState(
+                                () {
+                                  usersDb.doc(user.uid).set(
+                                    {
+                                      'username': data['username'],
+                                      'avatarUrl': url
+                                    },
+                                  );
+                                },
+                              ),
+                            );
                       },
                       child: CircleAvatar(
                         radius: 100,
@@ -54,7 +73,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                     ),
                     Text(data['username']),
-                    Text(data['email']),
+                    Text(user.email),
                     Divider(),
                     FlatButton(
                       color: Colors.redAccent,

@@ -55,7 +55,6 @@ class _AuthScreenState extends State<AuthScreen> {
       if (user != null) {
         usersDb.doc(user.user.uid).set({
           'username': usernameController.text,
-          'email': emailController.text,
           'avatarUrl':
               'https://tanzolymp.com/images/default-non-user-no-photo-1.jpg'
         });
