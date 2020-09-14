@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:parking/screens/auth_screen.dart';
+import 'package:image_picker/image_picker.dart';
 
 class ProfileScreen extends StatefulWidget {
   @override
@@ -10,9 +11,9 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  PickedFile newImage;
+  final picker = ImagePicker();
   User user;
-  String name = '...';
-  CollectionReference usersDb = FirebaseFirestore.instance.collection('users');
   initState() {
     super.initState();
     user = FirebaseAuth.instance.currentUser;
@@ -20,7 +21,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print(user.uid);
+    CollectionReference usersDb =
+        FirebaseFirestore.instance.collection('users');
     return FutureBuilder<DocumentSnapshot>(
         future: usersDb.doc(user.uid).get(),
         builder: (context, snapshot) {
@@ -33,36 +35,34 @@ class _ProfileScreenState extends State<ProfileScreen> {
             return Scaffold(
               appBar: AppBar(
                 centerTitle: true,
-                title: Text(user != null ? user.email : 'Guest'),
+                title: Text('Profile'),
               ),
               body: Center(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    CircleAvatar(
-                      radius: 100,
-                      backgroundImage: NetworkImage(data['avatarUrl']),
+                    GestureDetector(
+                      onTap: () async {
+                        print('tapped');
+                        final pickedImage =
+                            await picker.getImage(source: ImageSource.gallery);
+                      },
+                      child: CircleAvatar(
+                        radius: 100,
+                        backgroundImage: NetworkImage(data['avatarUrl']),
+                      ),
                     ),
                     Text(data['username']),
+                    Text(data['email']),
                     Divider(),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        FlatButton(
-                          color: Theme.of(context).primaryColorLight,
-                          onPressed: () {},
-                          child: Text('edit'),
-                        ),
-                        FlatButton(
-                          color: Colors.redAccent,
-                          onPressed: () async {
-                            await FirebaseAuth.instance.signOut();
-                            Get.off(AuthScreen());
-                          },
-                          child: Text('logout'),
-                        ),
-                      ],
+                    FlatButton(
+                      color: Colors.redAccent,
+                      onPressed: () async {
+                        await FirebaseAuth.instance.signOut();
+                        Get.off(AuthScreen());
+                      },
+                      child: Text('logout'),
                     ),
                   ],
                 ),
