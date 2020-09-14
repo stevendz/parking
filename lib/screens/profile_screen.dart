@@ -14,7 +14,7 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  PickedFile newImage;
+  final newUsernameController = TextEditingController();
   User user;
   initState() {
     super.initState();
@@ -49,12 +49,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       onTap: () async {
                         PickedFile pickedImage = await ImagePicker()
                             .getImage(source: ImageSource.gallery);
-                        StorageReference reference =
-                            imgStorage.child(user.email + '_avatar');
-                        StorageUploadTask storageUploadTask =
-                            reference.putFile(File(pickedImage.path));
-
-                        await reference.getDownloadURL().then(
+                        imgStorage
+                            .child(user.email + '_avatar')
+                            .putFile(File(pickedImage.path));
+                        // TODO Display new image after uploading(setState is not working)
+                        await imgStorage
+                            .child(user.email + '_avatar')
+                            .getDownloadURL()
+                            .then(
                               (url) => setState(
                                 () {
                                   usersDb.doc(user.uid).set(
@@ -72,7 +74,64 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         backgroundImage: NetworkImage(data['avatarUrl']),
                       ),
                     ),
-                    Text(data['username']),
+                    GestureDetector(
+                      onTap: () {
+                        showDialog(
+                          context: context,
+                          child: AlertDialog(
+                            contentPadding: EdgeInsets.all(10),
+                            content: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                TextFormField(
+                                  controller: newUsernameController,
+                                  decoration: InputDecoration(
+                                      labelText: 'New username'),
+                                ),
+                                SizedBox(height: 10),
+                                FlatButton(
+                                  color: Theme.of(context).primaryColorLight,
+                                  onPressed: () {
+                                    if (newUsernameController.text
+                                            .trim()
+                                            .length >
+                                        3) {
+                                      setState(() {
+                                        usersDb.doc(user.uid).set(
+                                          {
+                                            'username':
+                                                newUsernameController.text,
+                                            'avatarUrl': data['avatarUrl']
+                                          },
+                                        );
+                                        newUsernameController.text = '';
+                                      });
+                                      Get.back();
+                                    }
+                                  },
+                                  child: Text('Save'),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Padding(
+                            padding: EdgeInsets.all(3),
+                            child: Text(data['username']),
+                          ),
+                          Icon(
+                            Icons.edit,
+                            size: 12,
+                            color: Colors.grey,
+                          )
+                        ],
+                      ),
+                    ),
                     Text(user.email),
                     Divider(),
                     FlatButton(
