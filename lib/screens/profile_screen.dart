@@ -56,8 +56,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                         FlatButton(
                           color: Colors.redAccent,
-                          onPressed: () {
-                            FirebaseAuth.instance.signOut();
+                          onPressed: () async {
+                            await FirebaseAuth.instance.signOut();
                             Get.off(AuthScreen());
                           },
                           child: Text('logout'),

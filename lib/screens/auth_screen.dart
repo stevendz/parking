@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:parking/screens/map_screen.dart';
@@ -10,14 +11,16 @@ class AuthScreen extends StatefulWidget {
 }
 
 class _AuthScreenState extends State<AuthScreen> {
-  final nameController = TextEditingController();
+  CollectionReference usersDb = FirebaseFirestore.instance.collection('users');
+  final usernameController = TextEditingController();
+  final emailController = TextEditingController();
   final passwordController = TextEditingController();
   bool isSignUp = true;
   String errorMessage = '';
 
   void signin() async {
     try {
-      if (nameController.text.trim().length < 6 ||
+      if (emailController.text.trim().length < 6 ||
           passwordController.text.trim().length < 6) {
         setState(() {
           errorMessage = 'Email or Password too short';
@@ -26,7 +29,7 @@ class _AuthScreenState extends State<AuthScreen> {
       }
       UserCredential user = await FirebaseAuth.instance
           .signInWithEmailAndPassword(
-              email: nameController.text, password: passwordController.text);
+              email: emailController.text, password: passwordController.text);
       if (user != null) {
         Get.off(MapScreen());
       }
@@ -39,7 +42,7 @@ class _AuthScreenState extends State<AuthScreen> {
 
   void signup() async {
     try {
-      if (nameController.text.trim().length < 6 ||
+      if (emailController.text.trim().length < 6 ||
           passwordController.text.trim().length < 3) {
         setState(() {
           errorMessage = 'Email or Password too short';
@@ -48,8 +51,14 @@ class _AuthScreenState extends State<AuthScreen> {
       }
       UserCredential user = await FirebaseAuth.instance
           .createUserWithEmailAndPassword(
-              email: nameController.text, password: passwordController.text);
+              email: emailController.text, password: passwordController.text);
       if (user != null) {
+        usersDb.doc(user.user.uid).set({
+          'username': usernameController.text,
+          'email': emailController.text,
+          'avatarUrl':
+              'https://tanzolymp.com/images/default-non-user-no-photo-1.jpg'
+        });
         Get.off(MapScreen());
       }
     } catch (error) {
@@ -71,10 +80,18 @@ class _AuthScreenState extends State<AuthScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Spacer(),
+                    isSignUp
+                        ? TextFormField(
+                            decoration: InputDecoration(labelText: 'Username'),
+                            controller: usernameController,
+                          )
+                        : Container(),
                     TextFormField(
-                      controller: nameController,
+                      decoration: InputDecoration(labelText: 'Email'),
+                      controller: emailController,
                     ),
                     TextFormField(
+                      decoration: InputDecoration(labelText: 'Password'),
                       obscureText: true,
                       controller: passwordController,
                     ),
