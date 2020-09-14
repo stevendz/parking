@@ -82,25 +82,26 @@ class _MapScreenState extends State<MapScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          automaticallyImplyLeading: false,
-          centerTitle: true,
-          title: Text(user != null ? user.email : 'Guest'),
-        ),
-        body: GoogleMap(
-          onMapCreated: (GoogleMapController controller) {
-            mapController = controller;
-          },
-          markers: Set.from(markers),
-          initialCameraPosition: CameraPosition(
-            target: LatLng(position.latitude, position.longitude),
-            zoom: 14,
-          ),
-        ),
-        floatingActionButton: FabMenu(moveToLocation: moveToLocation),
+    return Scaffold(
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        centerTitle: true,
+        title: Text(user != null ? user.email : 'Guest'),
       ),
+      body: GoogleMap(
+        onMapCreated: (GoogleMapController controller) {
+          mapController = controller;
+        },
+        markers: Set.from(markers),
+        onLongPress: (argument) {
+          print(argument);
+        },
+        initialCameraPosition: CameraPosition(
+          target: LatLng(position.latitude, position.longitude),
+          zoom: 14,
+        ),
+      ),
+      floatingActionButton: FabMenu(moveToLocation: moveToLocation),
     );
   }
 }

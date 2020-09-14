@@ -16,8 +16,10 @@ dependencies:
   firebase_core: 
   firebase_auth: 
   cloud_firestore:
+  firebase_storage: ^4.0.0
   get: ^3.8.0
   fab_circular_menu: ^1.0.0
+  image_picker: ^0.6.7+7
 
 dev_dependencies:
   flutter_test:

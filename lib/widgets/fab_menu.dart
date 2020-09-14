@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:parking/screens/auth_screen.dart';
+import 'package:parking/screens/profile_screen.dart';
 
 class FabMenu extends StatelessWidget {
   final Function moveToLocation;
@@ -26,8 +27,7 @@ class FabMenu extends StatelessWidget {
         RawMaterialButton(
           elevation: 0,
           onPressed: () async {
-            await FirebaseAuth.instance.signOut();
-            Get.off(AuthScreen());
+            Get.to(ProfileScreen());
           },
           fillColor: Theme.of(context).primaryColorLight,
           shape: CircleBorder(),
@@ -35,7 +35,9 @@ class FabMenu extends StatelessWidget {
         ),
         RawMaterialButton(
           elevation: 0,
-          onPressed: () {},
+          onPressed: () {
+            FirebaseAuth.instance.signOut();
+          },
           fillColor: Theme.of(context).primaryColorLight,
           shape: CircleBorder(),
           child: Icon(Icons.chat),
