@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:parking/screens/auth_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   @override
@@ -33,11 +35,37 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 centerTitle: true,
                 title: Text(user != null ? user.email : 'Guest'),
               ),
-              body: Column(
-                children: [
-                  Text(data['name']),
-                  Image.network(data['avatarUrl'])
-                ],
+              body: Center(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    CircleAvatar(
+                      radius: 100,
+                      backgroundImage: NetworkImage(data['avatarUrl']),
+                    ),
+                    Text(data['username']),
+                    Divider(),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        FlatButton(
+                          color: Theme.of(context).primaryColorLight,
+                          onPressed: () {},
+                          child: Text('edit'),
+                        ),
+                        FlatButton(
+                          color: Colors.redAccent,
+                          onPressed: () {
+                            FirebaseAuth.instance.signOut();
+                            Get.off(AuthScreen());
+                          },
+                          child: Text('logout'),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             );
           }
