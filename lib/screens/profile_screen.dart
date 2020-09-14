@@ -135,6 +135,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     Text(user.email),
                     Divider(),
                     FlatButton(
+                      color: Theme.of(context).primaryColor,
+                      onPressed: () async {},
+                      child: Text('Add new parking slot'),
+                    ),
+                    FlatButton(
+                      color: Theme.of(context).primaryColorLight,
+                      onPressed: () async {},
+                      child: Text('Manage parking slots'),
+                    ),
+                    Divider(),
+                    FlatButton(
                       color: Colors.redAccent,
                       onPressed: () async {
                         await FirebaseAuth.instance.signOut();

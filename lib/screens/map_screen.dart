@@ -93,6 +93,9 @@ class _MapScreenState extends State<MapScreen> {
           mapController = controller;
         },
         markers: Set.from(markers),
+        onLongPress: (argument) {
+          print(argument);
+        },
         initialCameraPosition: CameraPosition(
           target: LatLng(position.latitude, position.longitude),
           zoom: 14,
