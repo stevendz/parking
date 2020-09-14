@@ -1,4 +1,4 @@
-String sigupExceptionMessage(error) {
+String signupExceptionMessage(error) {
   switch (error) {
     case "operation-not-allowed":
       return "Anonymous accounts are not enabled";

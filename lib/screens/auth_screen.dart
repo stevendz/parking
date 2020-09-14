@@ -54,7 +54,7 @@ class _AuthScreenState extends State<AuthScreen> {
       }
     } catch (error) {
       setState(() {
-        errorMessage = sigupExceptionMessage(error.code);
+        errorMessage = signupExceptionMessage(error.code);
       });
     }
   }
