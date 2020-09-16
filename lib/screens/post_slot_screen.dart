@@ -10,6 +10,7 @@ class PostSlotScreen extends StatefulWidget {
 class _PostSlotScreenState extends State<PostSlotScreen> {
   Position position;
   Position selectedPosition;
+  String selectedLocation = '';
   List<Marker> markers = [];
 
   initState() {
@@ -37,6 +38,19 @@ class _PostSlotScreenState extends State<PostSlotScreen> {
           markerId: MarkerId('CurrentSelectedLatLng'),
         ),
       );
+      getLocation();
+    });
+  }
+
+  getLocation() async {
+    List<Placemark> placemarks = await Geolocator().placemarkFromCoordinates(
+        selectedPosition.latitude, selectedPosition.longitude);
+    setState(() {
+      selectedLocation = placemarks[0].thoroughfare +
+          ', ' +
+          placemarks[0].postalCode +
+          ', ' +
+          placemarks[0].locality;
     });
   }
 
@@ -49,7 +63,7 @@ class _PostSlotScreenState extends State<PostSlotScreen> {
               centerTitle: true,
               title: Text('Add new slot'),
             ),
-            body: ListView(
+            body: Column(
               children: <Widget>[
                 MediaQuery.of(context).viewInsets.bottom > 1
                     ? Container()
@@ -71,7 +85,21 @@ class _PostSlotScreenState extends State<PostSlotScreen> {
                           },
                         ),
                       ),
-                TextFormField(),
+                Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.all(10),
+                    child: ListView(
+                      children: <Widget>[
+                        Text(selectedLocation),
+                        Divider(),
+                        TextFormField(
+                          decoration:
+                              InputDecoration(helperText: 'Description'),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               ],
             ),
           );
