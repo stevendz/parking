@@ -50,25 +50,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       onTap: () async {
                         PickedFile pickedImage = await ImagePicker()
                             .getImage(source: ImageSource.gallery);
-                        imgStorage
+                        StorageUploadTask uploadTask = imgStorage
                             .child(user.email + '_avatar')
                             .putFile(File(pickedImage.path));
-                        // TODO Display new image after uploading(setState is not working)
-                        await imgStorage
-                            .child(user.email + '_avatar')
-                            .getDownloadURL()
-                            .then(
-                              (url) => setState(
-                                () {
-                                  usersDb.doc(user.uid).set(
-                                    {
-                                      'username': data['username'],
-                                      'avatarUrl': url
-                                    },
-                                  );
-                                },
-                              ),
-                            );
+                        String url = await (await uploadTask.onComplete)
+                            .ref
+                            .getDownloadURL();
+                        setState(() {
+                          usersDb.doc(user.uid).set(
+                            {'username': data['username'], 'avatarUrl': url},
+                          );
+                        });
                       },
                       child: CircleAvatar(
                         radius: 100,
