@@ -1,6 +1,4 @@
 import 'dart:io';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
@@ -15,12 +13,14 @@ class PostSlotScreen extends StatefulWidget {
 class _PostSlotScreenState extends State<PostSlotScreen> {
   Position position;
   Position selectedPosition;
-  String selectedLocation = 'Tap on map to select location...';
+  String selectedLocation;
   String slotImage;
   List<Marker> markers = [];
 
   initState() {
     super.initState();
+    selectedPosition = position;
+    selectedLocation = 'Tap on map to select location...';
     getPosition();
   }
 
@@ -60,12 +60,6 @@ class _PostSlotScreenState extends State<PostSlotScreen> {
     });
   }
 
-  setSlotImage(url) {
-    setState(() {
-      slotImage = url;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     StorageReference imgStorage = FirebaseStorage.instance.ref();
@@ -82,7 +76,7 @@ class _PostSlotScreenState extends State<PostSlotScreen> {
             MediaQuery.of(context).viewInsets.bottom > 1
                 ? Container()
                 : Container(
-                    height: MediaQuery.of(context).size.height * 0.5,
+                    height: MediaQuery.of(context).size.height * 0.4,
                     child: GoogleMap(
                       markers: Set.from(markers),
                       initialCameraPosition: CameraPosition(
@@ -109,17 +103,20 @@ class _PostSlotScreenState extends State<PostSlotScreen> {
                           onTap: () async {
                             PickedFile pickedImage = await ImagePicker()
                                 .getImage(source: ImageSource.gallery);
-                            String imageId = position.latitude.toString() +
-                                '_' +
-                                position.longitude.toString();
-                            imgStorage
+                            String imageId =
+                                selectedPosition.latitude.toString() +
+                                    '_' +
+                                    position.longitude.toString();
+                            StorageUploadTask uploadTask = imgStorage
                                 .child(imageId)
                                 .putFile(File(pickedImage.path));
 
-                            imgStorage
-                                .child(imageId)
-                                .getDownloadURL()
-                                .then((url) => setSlotImage(url));
+                            String url = await (await uploadTask.onComplete)
+                                .ref
+                                .getDownloadURL();
+                            setState(() {
+                              slotImage = url;
+                            });
                           },
                           child: Container(
                             width: 50,
