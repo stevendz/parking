@@ -1,6 +1,11 @@
+import 'dart:io';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:image_picker/image_picker.dart';
 
 class PostSlotScreen extends StatefulWidget {
   @override
@@ -10,7 +15,8 @@ class PostSlotScreen extends StatefulWidget {
 class _PostSlotScreenState extends State<PostSlotScreen> {
   Position position;
   Position selectedPosition;
-  String selectedLocation = '';
+  String selectedLocation = 'Tap on map to select location...';
+  String slotImage;
   List<Marker> markers = [];
 
   initState() {
@@ -54,54 +60,121 @@ class _PostSlotScreenState extends State<PostSlotScreen> {
     });
   }
 
+  setSlotImage(url) {
+    setState(() {
+      slotImage = url;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return position == null
-        ? Material(child: Center(child: Text("loading...")))
-        : Scaffold(
-            appBar: AppBar(
-              centerTitle: true,
-              title: Text('Add new slot'),
-            ),
-            body: Column(
-              children: <Widget>[
-                MediaQuery.of(context).viewInsets.bottom > 1
-                    ? Container()
-                    : Container(
-                        height: MediaQuery.of(context).size.height * 0.5,
-                        child: GoogleMap(
-                          markers: Set.from(markers),
-                          initialCameraPosition: CameraPosition(
-                            target:
-                                LatLng(position.latitude, position.longitude),
-                            zoom: 14,
-                          ),
-                          onTap: (position) {
-                            selectedPosition = Position(
-                              latitude: position.latitude,
-                              longitude: position.longitude,
-                            );
-                            setMarker();
-                          },
-                        ),
+    StorageReference imgStorage = FirebaseStorage.instance.ref();
+    if (position == null) {
+      return Material(child: Center(child: Text("loading...")));
+    } else {
+      return Scaffold(
+        appBar: AppBar(
+          centerTitle: true,
+          title: Text('Add new slot'),
+        ),
+        body: Column(
+          children: <Widget>[
+            MediaQuery.of(context).viewInsets.bottom > 1
+                ? Container()
+                : Container(
+                    height: MediaQuery.of(context).size.height * 0.5,
+                    child: GoogleMap(
+                      markers: Set.from(markers),
+                      initialCameraPosition: CameraPosition(
+                        target: LatLng(position.latitude, position.longitude),
+                        zoom: 14,
                       ),
-                Expanded(
-                  child: Padding(
-                    padding: EdgeInsets.all(10),
-                    child: ListView(
-                      children: <Widget>[
-                        Text(selectedLocation),
-                        Divider(),
-                        TextFormField(
-                          decoration:
-                              InputDecoration(helperText: 'Description'),
-                        ),
-                      ],
+                      onTap: (position) {
+                        selectedPosition = Position(
+                          latitude: position.latitude,
+                          longitude: position.longitude,
+                        );
+                        setMarker();
+                      },
                     ),
                   ),
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.all(15),
+                child: ListView(
+                  children: <Widget>[
+                    Row(
+                      children: <Widget>[
+                        GestureDetector(
+                          onTap: () async {
+                            PickedFile pickedImage = await ImagePicker()
+                                .getImage(source: ImageSource.gallery);
+                            String imageId = position.latitude.toString() +
+                                '_' +
+                                position.longitude.toString();
+                            imgStorage
+                                .child(imageId)
+                                .putFile(File(pickedImage.path));
+
+                            imgStorage
+                                .child(imageId)
+                                .getDownloadURL()
+                                .then((url) => setSlotImage(url));
+                          },
+                          child: Container(
+                            width: 50,
+                            height: 50,
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: Colors.grey,
+                              ),
+                            ),
+                            child: slotImage == null
+                                ? Icon(
+                                    Icons.add_a_photo,
+                                    color: Colors.grey,
+                                  )
+                                : Image.network(slotImage),
+                          ),
+                        ),
+                        SizedBox(width: 20),
+                        Text(selectedLocation),
+                      ],
+                    ),
+                    Divider(),
+                    TextFormField(
+                      decoration: InputDecoration(helperText: 'Description'),
+                    ),
+                    Row(
+                      children: <Widget>[
+                        Expanded(
+                          child: TextFormField(
+                            keyboardType: TextInputType.number,
+                            decoration: InputDecoration(
+                              helperText: 'Daily',
+                              suffixIcon: Icon(Icons.attach_money),
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: 15),
+                        Expanded(
+                          child: TextFormField(
+                            keyboardType: TextInputType.number,
+                            decoration: InputDecoration(
+                              helperText: 'Hourly',
+                              suffixIcon: Icon(Icons.attach_money),
+                            ),
+                          ),
+                        ),
+                      ],
+                    )
+                  ],
                 ),
-              ],
+              ),
             ),
-          );
+          ],
+        ),
+      );
+    }
   }
 }
