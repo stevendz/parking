@@ -8,6 +8,7 @@ import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:parking/screens/map_screen.dart';
+import 'package:parking/widgets/image_uploader.dart';
 import 'package:uuid/uuid.dart';
 
 class PostSlotScreen extends StatefulWidget {
@@ -16,6 +17,7 @@ class PostSlotScreen extends StatefulWidget {
 }
 
 class _PostSlotScreenState extends State<PostSlotScreen> {
+  StorageReference imgStorage = FirebaseStorage.instance.ref();
   String uuid = Uuid().v1();
   Position position;
   Position selectedPosition;
@@ -91,9 +93,21 @@ class _PostSlotScreenState extends State<PostSlotScreen> {
     Get.off(MapScreen());
   }
 
+  uploadImage(pickedImage) async {
+    String imageId = selectedPosition.latitude.toString() +
+        '_' +
+        position.longitude.toString();
+    StorageUploadTask uploadTask =
+        imgStorage.child(imageId).putFile(File(pickedImage.path));
+
+    String url = await (await uploadTask.onComplete).ref.getDownloadURL();
+    setState(() {
+      slotImage = url;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    StorageReference imgStorage = FirebaseStorage.instance.ref();
     if (position == null) {
       return Material(child: Center(child: Text("loading...")));
     }
@@ -131,43 +145,9 @@ class _PostSlotScreenState extends State<PostSlotScreen> {
                 children: <Widget>[
                   Row(
                     children: <Widget>[
-                      GestureDetector(
-                        onTap: () async {
-                          PickedFile pickedImage = await ImagePicker()
-                              .getImage(source: ImageSource.gallery);
-                          String imageId =
-                              selectedPosition.latitude.toString() +
-                                  '_' +
-                                  position.longitude.toString();
-                          StorageUploadTask uploadTask = imgStorage
-                              .child(imageId)
-                              .putFile(File(pickedImage.path));
-
-                          String url = await (await uploadTask.onComplete)
-                              .ref
-                              .getDownloadURL();
-                          setState(() {
-                            slotImage = url;
-                          });
-                        },
-                        child: Container(
-                          width: 50,
-                          height: 50,
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              color: Colors.grey,
-                            ),
-                          ),
-                          child: slotImage == null
-                              ? Icon(
-                                  Icons.add_a_photo,
-                                  color: Colors.grey,
-                                )
-                              : Image.network(
-                                  slotImage,
-                                  fit: BoxFit.cover,
-                                ),
-                        ),
+                      ImageUploader(
+                        slotImage: slotImage,
+                        uploadImage: uploadImage,
                       ),
                       SizedBox(width: 20),
                       Text(selectedLocation),
