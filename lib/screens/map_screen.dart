@@ -114,14 +114,18 @@ class _MapScreenState extends State<MapScreen> {
             : Text(
                 'Hello ' + (username != null ? username : 'No User'),
               ),
-        leading: isSearching ? Icon(Icons.search) : Container(),
+        leading: Visibility(
+          visible: isSearching,
+          child: Icon(Icons.search),
+        ),
         actions: <Widget>[
-          isSearching
-              ? IconButton(
-                  icon: Icon(Icons.cancel),
-                  onPressed: toggleSearchbar,
-                )
-              : Container()
+          Visibility(
+            visible: isSearching,
+            child: IconButton(
+              icon: Icon(Icons.cancel),
+              onPressed: toggleSearchbar,
+            ),
+          )
         ],
       ),
       body: GoogleMap(

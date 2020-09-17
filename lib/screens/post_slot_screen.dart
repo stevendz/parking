@@ -104,25 +104,26 @@ class _PostSlotScreenState extends State<PostSlotScreen> {
       ),
       body: Column(
         children: <Widget>[
-          MediaQuery.of(context).viewInsets.bottom > 1
-              ? Container()
-              : Container(
-                  height: MediaQuery.of(context).size.height * 0.3,
-                  child: GoogleMap(
-                    markers: Set.from(markers),
-                    initialCameraPosition: CameraPosition(
-                      target: LatLng(position.latitude, position.longitude),
-                      zoom: 14,
-                    ),
-                    onTap: (position) {
-                      selectedPosition = Position(
-                        latitude: position.latitude,
-                        longitude: position.longitude,
-                      );
-                      setMarker();
-                    },
-                  ),
+          Visibility(
+            visible: MediaQuery.of(context).viewInsets.bottom < 1,
+            child: Container(
+              height: MediaQuery.of(context).size.height * 0.3,
+              child: GoogleMap(
+                markers: Set.from(markers),
+                initialCameraPosition: CameraPosition(
+                  target: LatLng(position.latitude, position.longitude),
+                  zoom: 14,
                 ),
+                onTap: (position) {
+                  selectedPosition = Position(
+                    latitude: position.latitude,
+                    longitude: position.longitude,
+                  );
+                  setMarker();
+                },
+              ),
+            ),
+          ),
           Expanded(
             child: Padding(
               padding: EdgeInsets.all(15),

@@ -69,80 +69,82 @@ class _AuthScreenState extends State<AuthScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return FirebaseAuth.instance.currentUser != null
-        ? MapScreen()
-        : SafeArea(
-            child: Scaffold(
-              body: Padding(
-                padding: EdgeInsets.all(20),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Spacer(),
-                    isSignUp
-                        ? TextFormField(
-                            decoration: InputDecoration(labelText: 'Username'),
-                            controller: usernameController,
-                          )
-                        : Container(),
-                    TextFormField(
-                      decoration: InputDecoration(labelText: 'Email'),
-                      controller: emailController,
-                    ),
-                    TextFormField(
-                      decoration: InputDecoration(labelText: 'Password'),
-                      obscureText: true,
-                      controller: passwordController,
-                    ),
-                    SizedBox(height: 20),
-                    Text(
-                      errorMessage,
-                      style: TextStyle(color: Colors.redAccent),
-                    ),
-                    FlatButton(
-                      color: Theme.of(context).primaryColor,
-                      onPressed: () {
-                        isSignUp ? signup() : signin();
-                      },
-                      child: Text(isSignUp ? 'Register' : 'Login'),
-                    ),
-                    // Admin login-button for debugging
-                    FlatButton(
-                      color: Colors.grey.shade300,
-                      onPressed: () async {
-                        UserCredential user = await FirebaseAuth.instance
-                            .signInWithEmailAndPassword(
-                          email: 'admin@gmail.com',
-                          password: '123456',
-                        );
-                        if (user != null) {
-                          Get.off(MapScreen());
-                        }
-                      },
-                      child: Text(
-                        'admin login',
-                        style: TextStyle(fontSize: 12),
-                      ),
-                    ),
-                    Spacer(),
-                    FlatButton(
-                      color: Theme.of(context).primaryColorLight,
-                      onPressed: () {
-                        setState(() {
-                          errorMessage = '';
-                          isSignUp = !isSignUp;
-                        });
-                      },
-                      child: Text(
-                        isSignUp
-                            ? 'Already an user? Login!'
-                            : 'No account? Register!',
-                      ),
-                    ),
-                  ],
+    if (FirebaseAuth.instance.currentUser != null) {
+      return MapScreen();
+    }
+    return SafeArea(
+      child: Scaffold(
+        body: Padding(
+          padding: EdgeInsets.all(20),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Spacer(),
+              Visibility(
+                visible: isSignUp,
+                child: TextFormField(
+                  decoration: InputDecoration(labelText: 'Username'),
+                  controller: usernameController,
                 ),
               ),
-            ),
-          );
+              TextFormField(
+                decoration: InputDecoration(labelText: 'Email'),
+                controller: emailController,
+              ),
+              TextFormField(
+                decoration: InputDecoration(labelText: 'Password'),
+                obscureText: true,
+                controller: passwordController,
+              ),
+              SizedBox(height: 20),
+              Text(
+                errorMessage,
+                style: TextStyle(color: Colors.redAccent),
+              ),
+              FlatButton(
+                color: Theme.of(context).primaryColor,
+                onPressed: () {
+                  isSignUp ? signup() : signin();
+                },
+                child: Text(isSignUp ? 'Register' : 'Login'),
+              ),
+              // Admin login-button for debugging
+              FlatButton(
+                color: Colors.grey.shade300,
+                onPressed: () async {
+                  UserCredential user =
+                      await FirebaseAuth.instance.signInWithEmailAndPassword(
+                    email: 'admin@gmail.com',
+                    password: '123456',
+                  );
+                  if (user != null) {
+                    Get.off(MapScreen());
+                  }
+                },
+                child: Text(
+                  'admin login',
+                  style: TextStyle(fontSize: 12),
+                ),
+              ),
+              Spacer(),
+              FlatButton(
+                color: Theme.of(context).primaryColorLight,
+                onPressed: () {
+                  setState(() {
+                    errorMessage = '';
+                    isSignUp = !isSignUp;
+                  });
+                },
+                child: Text(
+                  isSignUp
+                      ? 'Already an user? Login!'
+                      : 'No account? Register!',
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }
