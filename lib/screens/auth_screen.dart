@@ -19,55 +19,6 @@ class _AuthScreenState extends State<AuthScreen> {
   bool isSignUp = true;
   String errorMessage = '';
 
-  void signin() async {
-    try {
-      if (emailController.text.trim().length < 6 ||
-          passwordController.text.trim().length < 6) {
-        setState(() {
-          errorMessage = 'Email or Password too short';
-        });
-        return;
-      }
-      UserCredential user = await FirebaseAuth.instance
-          .signInWithEmailAndPassword(
-              email: emailController.text, password: passwordController.text);
-      if (user != null) {
-        Get.off(MapScreen());
-      }
-    } catch (error) {
-      setState(() {
-        errorMessage = authExceptionMessage(error.code);
-      });
-    }
-  }
-
-  void signup() async {
-    try {
-      if (emailController.text.trim().length < 6 ||
-          passwordController.text.trim().length < 3) {
-        setState(() {
-          errorMessage = 'Email or Password too short';
-        });
-        return;
-      }
-      UserCredential user = await FirebaseAuth.instance
-          .createUserWithEmailAndPassword(
-              email: emailController.text, password: passwordController.text);
-      if (user != null) {
-        usersDb.doc(user.user.uid).set({
-          'username': usernameController.text,
-          'avatarUrl':
-              'https://tanzolymp.com/images/default-non-user-no-photo-1.jpg'
-        });
-        Get.off(MapScreen());
-      }
-    } catch (error) {
-      setState(() {
-        errorMessage = authExceptionMessage(error.code);
-      });
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     if (FirebaseAuth.instance.currentUser != null) {
@@ -137,5 +88,54 @@ class _AuthScreenState extends State<AuthScreen> {
         ),
       ),
     );
+  }
+
+  void signin() async {
+    try {
+      if (emailController.text.trim().length < 6 ||
+          passwordController.text.trim().length < 6) {
+        setState(() {
+          errorMessage = 'Email or Password too short';
+        });
+        return;
+      }
+      UserCredential user = await FirebaseAuth.instance
+          .signInWithEmailAndPassword(
+              email: emailController.text, password: passwordController.text);
+      if (user != null) {
+        Get.off(MapScreen());
+      }
+    } catch (error) {
+      setState(() {
+        errorMessage = authExceptionMessage(error.code);
+      });
+    }
+  }
+
+  void signup() async {
+    try {
+      if (emailController.text.trim().length < 6 ||
+          passwordController.text.trim().length < 3) {
+        setState(() {
+          errorMessage = 'Email or Password too short';
+        });
+        return;
+      }
+      UserCredential user = await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(
+              email: emailController.text, password: passwordController.text);
+      if (user != null) {
+        usersDb.doc(user.user.uid).set({
+          'username': usernameController.text,
+          'avatarUrl':
+              'https://tanzolymp.com/images/default-non-user-no-photo-1.jpg'
+        });
+        Get.off(MapScreen());
+      }
+    } catch (error) {
+      setState(() {
+        errorMessage = authExceptionMessage(error.code);
+      });
+    }
   }
 }

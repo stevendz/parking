@@ -19,22 +19,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
   CollectionReference usersDb = FirebaseFirestore.instance.collection('users');
   StorageReference imgStorage = FirebaseStorage.instance.ref();
   User user;
-  initState() {
+
+  @override
+  void initState() {
     super.initState();
     user = FirebaseAuth.instance.currentUser;
-  }
-
-  updateUsername(newUsername) {
-    if (newUsername.trim().length > 3) {
-      setState(() {
-        usersDb.doc(user.uid).update(
-          {
-            'username': newUsername,
-          },
-        );
-      });
-      Get.back();
-    }
   }
 
   @override
@@ -115,5 +104,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
         return Material(child: Center(child: Text("loading...")));
       },
     );
+  }
+
+  void updateUsername(newUsername) {
+    if (newUsername.trim().length > 3) {
+      setState(() {
+        usersDb.doc(user.uid).update(
+          {
+            'username': newUsername,
+          },
+        );
+      });
+      Get.back();
+    }
   }
 }

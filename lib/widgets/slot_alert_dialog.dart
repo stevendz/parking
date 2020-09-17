@@ -22,30 +22,6 @@ class _SlotAlertDialogState extends State<SlotAlertDialog> {
     getUserAvatar();
   }
 
-  getLocation() async {
-    List<Placemark> placemarks = await Geolocator().placemarkFromCoordinates(
-        widget.slot["latitude"], widget.slot["longitude"]);
-    setState(() {
-      location = placemarks[0].thoroughfare +
-          ', ' +
-          placemarks[0].postalCode +
-          ', ' +
-          placemarks[0].locality;
-    });
-  }
-
-  getUserAvatar() async {
-    String userUid = widget.slot['userUid'];
-    String url = await FirebaseFirestore.instance
-        .collection('users')
-        .doc(userUid)
-        .get()
-        .then((value) => value.data()['avatarUrl']);
-    setState(() {
-      userAvatar = url;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -124,5 +100,29 @@ class _SlotAlertDialogState extends State<SlotAlertDialog> {
         ],
       ),
     );
+  }
+
+  void getLocation() async {
+    List<Placemark> placemarks = await Geolocator().placemarkFromCoordinates(
+        widget.slot["latitude"], widget.slot["longitude"]);
+    setState(() {
+      location = placemarks[0].thoroughfare +
+          ', ' +
+          placemarks[0].postalCode +
+          ', ' +
+          placemarks[0].locality;
+    });
+  }
+
+  void getUserAvatar() async {
+    String userUid = widget.slot['userUid'];
+    String url = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(userUid)
+        .get()
+        .then((value) => value.data()['avatarUrl']);
+    setState(() {
+      userAvatar = url;
+    });
   }
 }

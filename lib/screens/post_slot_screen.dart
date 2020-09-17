@@ -32,82 +32,13 @@ class _PostSlotScreenState extends State<PostSlotScreen> {
   TextEditingController dailyController = TextEditingController();
   TextEditingController hourlyController = TextEditingController();
 
-  initState() {
+  @override
+  void initState() {
     super.initState();
     user = FirebaseAuth.instance.currentUser;
     selectedPosition = position;
     selectedLocation = 'Tap on map to select location...';
     getPosition();
-  }
-
-  getPosition() async {
-    Position position = await Geolocator()
-        .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-    if (position != null) {
-      setState(() {
-        this.position = position;
-      });
-    }
-  }
-
-  setPosition(tappedPosition) {
-    selectedPosition = Position(
-      latitude: tappedPosition.latitude,
-      longitude: tappedPosition.longitude,
-    );
-    setState(() {
-      markers = [
-        Marker(
-          position:
-              LatLng(selectedPosition.latitude, selectedPosition.longitude),
-          markerId: MarkerId('CurrentSelectedLatLng'),
-        )
-      ];
-      getLocation();
-    });
-  }
-
-  getLocation() async {
-    List<Placemark> placemarks = await Geolocator().placemarkFromCoordinates(
-        selectedPosition.latitude, selectedPosition.longitude);
-    if (placemarks != null && placemarks.isNotEmpty) {
-      setState(() {
-        selectedLocation = placemarks[0].thoroughfare +
-            ', ' +
-            placemarks[0].postalCode +
-            ', ' +
-            placemarks[0].locality;
-      });
-    }
-  }
-
-  postSlot() {
-    // TODO: Add validation
-    CollectionReference slotsDb =
-        FirebaseFirestore.instance.collection('slots');
-    slotsDb.doc(uuid).set({
-      'title': titleController.text,
-      'latitude': selectedPosition.latitude,
-      'longitude': selectedPosition.longitude,
-      'daily': dailyController.text,
-      'hourly': hourlyController.text,
-      'imageUrl': slotImage,
-      'userUid': user.uid,
-    });
-    Get.off(MapScreen());
-  }
-
-  uploadImage(pickedImage) async {
-    String imageId = selectedPosition.latitude.toString() +
-        '_' +
-        position.longitude.toString();
-    StorageUploadTask uploadTask =
-        imgStorage.child(imageId).putFile(File(pickedImage.path));
-
-    String url = await (await uploadTask.onComplete).ref.getDownloadURL();
-    setState(() {
-      slotImage = url;
-    });
   }
 
   @override
@@ -170,5 +101,75 @@ class _PostSlotScreenState extends State<PostSlotScreen> {
         ],
       ),
     );
+  }
+
+  void getPosition() async {
+    Position position = await Geolocator()
+        .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    if (position != null) {
+      setState(() {
+        this.position = position;
+      });
+    }
+  }
+
+  void setPosition(tappedPosition) {
+    selectedPosition = Position(
+      latitude: tappedPosition.latitude,
+      longitude: tappedPosition.longitude,
+    );
+    setState(() {
+      markers = [
+        Marker(
+          position:
+              LatLng(selectedPosition.latitude, selectedPosition.longitude),
+          markerId: MarkerId('CurrentSelectedLatLng'),
+        )
+      ];
+      getLocation();
+    });
+  }
+
+  void getLocation() async {
+    List<Placemark> placemarks = await Geolocator().placemarkFromCoordinates(
+        selectedPosition.latitude, selectedPosition.longitude);
+    if (placemarks != null && placemarks.isNotEmpty) {
+      setState(() {
+        selectedLocation = placemarks[0].thoroughfare +
+            ', ' +
+            placemarks[0].postalCode +
+            ', ' +
+            placemarks[0].locality;
+      });
+    }
+  }
+
+  void postSlot() {
+    // TODO: Add validation
+    CollectionReference slotsDb =
+        FirebaseFirestore.instance.collection('slots');
+    slotsDb.doc(uuid).set({
+      'title': titleController.text,
+      'latitude': selectedPosition.latitude,
+      'longitude': selectedPosition.longitude,
+      'daily': dailyController.text,
+      'hourly': hourlyController.text,
+      'imageUrl': slotImage,
+      'userUid': user.uid,
+    });
+    Get.off(MapScreen());
+  }
+
+  void uploadImage(pickedImage) async {
+    String imageId = selectedPosition.latitude.toString() +
+        '_' +
+        position.longitude.toString();
+    StorageUploadTask uploadTask =
+        imgStorage.child(imageId).putFile(File(pickedImage.path));
+
+    String url = await (await uploadTask.onComplete).ref.getDownloadURL();
+    setState(() {
+      slotImage = url;
+    });
   }
 }

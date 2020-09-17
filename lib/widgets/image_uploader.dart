@@ -11,12 +11,6 @@ class ImageUploader extends StatelessWidget {
   final Function uploadImage;
   final String image;
 
-  upload() async {
-    PickedFile pickedImage =
-        await ImagePicker().getImage(source: ImageSource.gallery);
-    uploadImage(pickedImage);
-  }
-
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -40,5 +34,11 @@ class ImageUploader extends StatelessWidget {
               ),
       ),
     );
+  }
+
+  void upload() async {
+    PickedFile pickedImage =
+        await ImagePicker().getImage(source: ImageSource.gallery);
+    uploadImage(pickedImage);
   }
 }

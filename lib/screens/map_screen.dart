@@ -21,7 +21,8 @@ class _MapScreenState extends State<MapScreen> {
   CollectionReference slotsDb = FirebaseFirestore.instance.collection('slots');
   CollectionReference usersDb = FirebaseFirestore.instance.collection('users');
 
-  initState() {
+  @override
+  void initState() {
     super.initState();
     //Random position for debugging
     position = Position(
@@ -31,76 +32,6 @@ class _MapScreenState extends State<MapScreen> {
     user = FirebaseAuth.instance.currentUser;
     loadSlots();
     getUsername();
-  }
-
-  loadSlots() {
-    slotsDb.get().then(
-          (QuerySnapshot querySnapshot) => {
-            querySnapshot.docs.forEach(
-              (slot) {
-                markers.add(
-                  Marker(
-                    markerId: MarkerId(slot.id),
-                    position: LatLng(
-                      slot.data()["latitude"],
-                      slot.data()["longitude"],
-                    ),
-                    onTap: () {
-                      showDialog(
-                        context: context,
-                        builder: (context) => SlotAlertDialog(
-                          slot: slot.data(),
-                        ),
-                      );
-                    },
-                  ),
-                );
-              },
-            )
-          },
-        );
-  }
-
-  moveToLocation() async {
-    try {
-      Position position = await Geolocator()
-          .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-      if (position != null) {
-        setState(() {
-          this.position = position;
-        });
-        mapController.animateCamera(
-          CameraUpdate.newCameraPosition(
-            CameraPosition(
-              zoom: 14,
-              target: LatLng(
-                position.latitude,
-                position.longitude,
-              ),
-            ),
-          ),
-        );
-      }
-    } catch (e) {
-      print(e);
-    }
-  }
-
-  getUsername() async {
-    String username = await FirebaseFirestore.instance
-        .collection('users')
-        .doc(user.uid)
-        .get()
-        .then((value) => value.data()['username']);
-    setState(() {
-      this.username = username;
-    });
-  }
-
-  toggleSearchbar() {
-    setState(() {
-      isSearching = !isSearching;
-    });
   }
 
   @override
@@ -146,5 +77,75 @@ class _MapScreenState extends State<MapScreen> {
         toggleSearchbar: toggleSearchbar,
       ),
     );
+  }
+
+  void loadSlots() {
+    slotsDb.get().then(
+          (QuerySnapshot querySnapshot) => {
+            querySnapshot.docs.forEach(
+              (slot) {
+                markers.add(
+                  Marker(
+                    markerId: MarkerId(slot.id),
+                    position: LatLng(
+                      slot.data()["latitude"],
+                      slot.data()["longitude"],
+                    ),
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) => SlotAlertDialog(
+                          slot: slot.data(),
+                        ),
+                      );
+                    },
+                  ),
+                );
+              },
+            )
+          },
+        );
+  }
+
+  void moveToLocation() async {
+    try {
+      Position position = await Geolocator()
+          .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+      if (position != null) {
+        setState(() {
+          this.position = position;
+        });
+        mapController.animateCamera(
+          CameraUpdate.newCameraPosition(
+            CameraPosition(
+              zoom: 14,
+              target: LatLng(
+                position.latitude,
+                position.longitude,
+              ),
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  void getUsername() async {
+    String username = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .get()
+        .then((value) => value.data()['username']);
+    setState(() {
+      this.username = username;
+    });
+  }
+
+  void toggleSearchbar() {
+    setState(() {
+      isSearching = !isSearching;
+    });
   }
 }
