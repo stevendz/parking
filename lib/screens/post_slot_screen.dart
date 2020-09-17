@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:uuid/uuid.dart';
 
 class PostSlotScreen extends StatefulWidget {
   @override
@@ -13,6 +14,7 @@ class PostSlotScreen extends StatefulWidget {
 }
 
 class _PostSlotScreenState extends State<PostSlotScreen> {
+  String uuid = Uuid().v1();
   Position position;
   Position selectedPosition;
   String selectedLocation;
@@ -71,9 +73,10 @@ class _PostSlotScreenState extends State<PostSlotScreen> {
   }
 
   postSlot() {
+    // TODO: Add validation
     CollectionReference slotsDb =
         FirebaseFirestore.instance.collection('slots');
-    slotsDb.doc('firstNewSlot').set({
+    slotsDb.doc(uuid).set({
       'title': titleController.text,
       'latitude': selectedPosition.latitude,
       'longitude': selectedPosition.longitude,
