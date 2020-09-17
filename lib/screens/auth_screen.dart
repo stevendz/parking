@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:parking/screens/map_screen.dart';
 import 'package:get/get.dart';
 import 'package:parking/services/exception_handler.dart';
+import 'package:parking/widgets/user_auth_form.dart';
 
 class AuthScreen extends StatefulWidget {
   @override
@@ -80,21 +81,11 @@ class _AuthScreenState extends State<AuthScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Spacer(),
-              Visibility(
-                visible: isSignUp,
-                child: TextFormField(
-                  decoration: InputDecoration(labelText: 'Username'),
-                  controller: usernameController,
-                ),
-              ),
-              TextFormField(
-                decoration: InputDecoration(labelText: 'Email'),
-                controller: emailController,
-              ),
-              TextFormField(
-                decoration: InputDecoration(labelText: 'Password'),
-                obscureText: true,
-                controller: passwordController,
+              UserAuthForm(
+                isSignUp: isSignUp,
+                usernameController: usernameController,
+                emailController: emailController,
+                passwordController: passwordController,
               ),
               SizedBox(height: 20),
               Text(
