@@ -94,13 +94,13 @@ class _SlotAlertDialogState extends State<SlotAlertDialog> {
               Text(
                 'hourly: ' +
                     (widget.slot["hourly"] != null
-                        ? (widget.slot["hourly"].toString() + '€')
+                        ? (widget.slot["hourly"].toString() + '\$')
                         : '-'),
               ),
               Text(
                 'daily: ' +
                     (widget.slot["daily"] != null
-                        ? (widget.slot["daily"].toString() + '€')
+                        ? (widget.slot["daily"].toString() + '\$')
                         : '-'),
               ),
             ],
