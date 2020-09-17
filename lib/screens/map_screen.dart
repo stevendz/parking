@@ -12,17 +12,25 @@ class MapScreen extends StatefulWidget {
 }
 
 class _MapScreenState extends State<MapScreen> {
-  Position position = Position(
-      latitude: 58.5638133,
-      longitude: 18.0425983); //Random position for debugging
+  Position position;
   User user;
+  String username;
+  bool isSearching = false;
   List<Marker> markers = [];
+  GoogleMapController mapController;
   CollectionReference slotsDb = FirebaseFirestore.instance.collection('slots');
+  CollectionReference usersDb = FirebaseFirestore.instance.collection('users');
 
   initState() {
     super.initState();
+    //Random position for debugging
+    position = Position(
+      latitude: 58.5638133,
+      longitude: 18.0425983,
+    );
     user = FirebaseAuth.instance.currentUser;
     loadSlots();
+    getUsername();
   }
 
   loadSlots() {
@@ -78,7 +86,22 @@ class _MapScreenState extends State<MapScreen> {
     }
   }
 
-  GoogleMapController mapController;
+  getUsername() async {
+    String username = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .get()
+        .then((value) => value.data()['username']);
+    setState(() {
+      this.username = username;
+    });
+  }
+
+  toggleSearchbar() {
+    setState(() {
+      isSearching = !isSearching;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -86,7 +109,20 @@ class _MapScreenState extends State<MapScreen> {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         centerTitle: true,
-        title: Text(user != null ? user.email : 'Guest'),
+        title: isSearching
+            ? TextFormField(autofocus: true)
+            : Text(
+                'Hello ' + (username != null ? username : 'No User'),
+              ),
+        leading: isSearching ? Icon(Icons.search) : Container(),
+        actions: <Widget>[
+          isSearching
+              ? IconButton(
+                  icon: Icon(Icons.cancel),
+                  onPressed: toggleSearchbar,
+                )
+              : Container()
+        ],
       ),
       body: GoogleMap(
         onMapCreated: (GoogleMapController controller) {
@@ -101,7 +137,10 @@ class _MapScreenState extends State<MapScreen> {
           zoom: 14,
         ),
       ),
-      floatingActionButton: FabMenu(moveToLocation: moveToLocation),
+      floatingActionButton: FabMenu(
+        moveToLocation: moveToLocation,
+        toggleSearchbar: toggleSearchbar,
+      ),
     );
   }
 }

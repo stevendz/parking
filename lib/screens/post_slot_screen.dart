@@ -4,8 +4,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:parking/screens/map_screen.dart';
 import 'package:uuid/uuid.dart';
 
 class PostSlotScreen extends StatefulWidget {
@@ -86,6 +88,7 @@ class _PostSlotScreenState extends State<PostSlotScreen> {
       'imageUrl': slotImage,
       'userUid': user.uid,
     });
+    Get.off(MapScreen());
   }
 
   @override
