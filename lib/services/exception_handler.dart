@@ -1,4 +1,4 @@
-String signupExceptionMessage(error) {
+String authExceptionMessage(error) {
   switch (error) {
     case "operation-not-allowed":
       return "Anonymous accounts are not enabled";
@@ -15,13 +15,6 @@ String signupExceptionMessage(error) {
     case "invalid-credential":
       return "Your email is invalid";
       break;
-    default:
-      return "An undefined Error happened.";
-  }
-}
-
-String signinExceptionMessage(error) {
-  switch (error) {
     case "invalid-email":
       return "Your email address appears to be malformed.";
       break;

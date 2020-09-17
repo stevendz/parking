@@ -36,7 +36,7 @@ class _AuthScreenState extends State<AuthScreen> {
       }
     } catch (error) {
       setState(() {
-        errorMessage = signinExceptionMessage(error.code);
+        errorMessage = authExceptionMessage(error.code);
       });
     }
   }
@@ -63,7 +63,7 @@ class _AuthScreenState extends State<AuthScreen> {
       }
     } catch (error) {
       setState(() {
-        errorMessage = signupExceptionMessage(error.code);
+        errorMessage = authExceptionMessage(error.code);
       });
     }
   }
