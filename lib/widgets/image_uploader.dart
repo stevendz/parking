@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 class ImageUploader extends StatelessWidget {
-  final Function uploadImage;
   const ImageUploader({
     Key key,
-    @required this.slotImage,
+    @required this.image,
     @required this.uploadImage,
   }) : super(key: key);
 
-  final String slotImage;
+  final Function uploadImage;
+  final String image;
 
   upload() async {
     PickedFile pickedImage =
@@ -29,13 +29,13 @@ class ImageUploader extends StatelessWidget {
             color: Colors.grey,
           ),
         ),
-        child: slotImage == null
+        child: image == null
             ? Icon(
                 Icons.add_a_photo,
                 color: Colors.grey,
               )
             : Image.network(
-                slotImage,
+                image,
                 fit: BoxFit.cover,
               ),
       ),
