@@ -1,4 +1,6 @@
 import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
@@ -16,9 +18,17 @@ class _PostSlotScreenState extends State<PostSlotScreen> {
   String selectedLocation;
   String slotImage;
   List<Marker> markers = [];
+  User user;
+
+  // Controllers
+  TextEditingController titleController = TextEditingController();
+  TextEditingController descriptionController = TextEditingController();
+  TextEditingController dailyController = TextEditingController();
+  TextEditingController hourlyController = TextEditingController();
 
   initState() {
     super.initState();
+    user = FirebaseAuth.instance.currentUser;
     selectedPosition = position;
     selectedLocation = 'Tap on map to select location...';
     getPosition();
@@ -60,6 +70,19 @@ class _PostSlotScreenState extends State<PostSlotScreen> {
     });
   }
 
+  postSlot() {
+    CollectionReference slotsDb =
+        FirebaseFirestore.instance.collection('slots');
+    slotsDb.doc('firstNewSlot').set({
+      'title': titleController.text,
+      'latitude': selectedPosition.latitude,
+      'longitude': selectedPosition.longitude,
+      'daily': dailyController.text,
+      'hourly': hourlyController.text,
+      'imageUrl': slotImage,
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     StorageReference imgStorage = FirebaseStorage.instance.ref();
@@ -76,7 +99,7 @@ class _PostSlotScreenState extends State<PostSlotScreen> {
             MediaQuery.of(context).viewInsets.bottom > 1
                 ? Container()
                 : Container(
-                    height: MediaQuery.of(context).size.height * 0.4,
+                    height: MediaQuery.of(context).size.height * 0.3,
                     child: GoogleMap(
                       markers: Set.from(markers),
                       initialCameraPosition: CameraPosition(
@@ -140,12 +163,18 @@ class _PostSlotScreenState extends State<PostSlotScreen> {
                     ),
                     Divider(),
                     TextFormField(
+                      controller: titleController,
+                      decoration: InputDecoration(helperText: 'Title'),
+                    ),
+                    TextFormField(
+                      controller: descriptionController,
                       decoration: InputDecoration(helperText: 'Description'),
                     ),
                     Row(
                       children: <Widget>[
                         Expanded(
                           child: TextFormField(
+                            controller: hourlyController,
                             keyboardType: TextInputType.number,
                             decoration: InputDecoration(
                               helperText: 'Daily',
@@ -156,6 +185,7 @@ class _PostSlotScreenState extends State<PostSlotScreen> {
                         SizedBox(width: 15),
                         Expanded(
                           child: TextFormField(
+                            controller: dailyController,
                             keyboardType: TextInputType.number,
                             decoration: InputDecoration(
                               helperText: 'Hourly',
@@ -164,11 +194,16 @@ class _PostSlotScreenState extends State<PostSlotScreen> {
                           ),
                         ),
                       ],
-                    )
+                    ),
                   ],
                 ),
               ),
             ),
+            FlatButton(
+              onPressed: postSlot,
+              child: Text('Post parking slot'),
+              color: Theme.of(context).primaryColor,
+            )
           ],
         ),
       );

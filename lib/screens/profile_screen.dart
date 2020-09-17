@@ -15,7 +15,7 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  final newUsernameController = TextEditingController();
+  TextEditingController newUsernameController = TextEditingController();
   User user;
   initState() {
     super.initState();
