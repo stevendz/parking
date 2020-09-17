@@ -14,6 +14,14 @@ class SlotAlertDialog extends StatefulWidget {
 class _SlotAlertDialogState extends State<SlotAlertDialog> {
   String userAvatar;
   String location = '';
+
+  @override
+  void initState() {
+    super.initState();
+    getLocation();
+    getUserAvatar();
+  }
+
   getLocation() async {
     List<Placemark> placemarks = await Geolocator().placemarkFromCoordinates(
         widget.slot["latitude"], widget.slot["longitude"]);
@@ -24,13 +32,6 @@ class _SlotAlertDialogState extends State<SlotAlertDialog> {
           ', ' +
           placemarks[0].locality;
     });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    getLocation();
-    getUserAvatar();
   }
 
   getUserAvatar() async {

@@ -34,12 +34,12 @@ class FabMenu extends StatelessWidget {
         ),
         RawMaterialButton(
           elevation: 0,
-          onPressed: () {
-            FirebaseAuth.instance.signOut();
-          },
           fillColor: Theme.of(context).primaryColorLight,
           shape: CircleBorder(),
-          child: Icon(Icons.chat),
+          child: Icon(
+            Icons.chat,
+            color: Colors.grey,
+          ),
         ),
         RawMaterialButton(
           elevation: 0,
