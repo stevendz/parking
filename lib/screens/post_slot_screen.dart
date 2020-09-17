@@ -49,7 +49,11 @@ class _PostSlotScreenState extends State<PostSlotScreen> {
     }
   }
 
-  setMarker() {
+  setPosition(tappedPosition) {
+    selectedPosition = Position(
+      latitude: tappedPosition.latitude,
+      longitude: tappedPosition.longitude,
+    );
     setState(() {
       markers = [
         Marker(
@@ -127,13 +131,7 @@ class _PostSlotScreenState extends State<PostSlotScreen> {
                   target: LatLng(position.latitude, position.longitude),
                   zoom: 14,
                 ),
-                onTap: (position) {
-                  selectedPosition = Position(
-                    latitude: position.latitude,
-                    longitude: position.longitude,
-                  );
-                  setMarker();
-                },
+                onTap: setPosition,
               ),
             ),
           ),

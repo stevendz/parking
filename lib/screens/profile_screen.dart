@@ -69,8 +69,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           .ref
                           .getDownloadURL();
                       setState(() {
-                        usersDb.doc(user.uid).set(
-                          {'username': data['username'], 'avatarUrl': url},
+                        usersDb.doc(user.uid).update(
+                          {'avatarUrl': url},
                         );
                       });
                     },
