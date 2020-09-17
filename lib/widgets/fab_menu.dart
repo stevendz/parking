@@ -2,7 +2,6 @@ import 'package:fab_circular_menu/fab_circular_menu.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:parking/screens/auth_screen.dart';
 import 'package:parking/screens/profile_screen.dart';
 
 class FabMenu extends StatelessWidget {
@@ -35,12 +34,12 @@ class FabMenu extends StatelessWidget {
         ),
         RawMaterialButton(
           elevation: 0,
-          onPressed: () {
-            FirebaseAuth.instance.signOut();
-          },
           fillColor: Theme.of(context).primaryColorLight,
           shape: CircleBorder(),
-          child: Icon(Icons.chat),
+          child: Icon(
+            Icons.chat,
+            color: Colors.grey,
+          ),
         ),
         RawMaterialButton(
           elevation: 0,

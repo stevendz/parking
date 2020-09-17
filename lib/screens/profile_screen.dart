@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:parking/screens/auth_screen.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:parking/screens/post_slot_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   @override
@@ -14,7 +15,7 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  final newUsernameController = TextEditingController();
+  TextEditingController newUsernameController = TextEditingController();
   User user;
   initState() {
     super.initState();
@@ -49,25 +50,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       onTap: () async {
                         PickedFile pickedImage = await ImagePicker()
                             .getImage(source: ImageSource.gallery);
-                        imgStorage
+                        StorageUploadTask uploadTask = imgStorage
                             .child(user.email + '_avatar')
                             .putFile(File(pickedImage.path));
-                        // TODO Display new image after uploading(setState is not working)
-                        await imgStorage
-                            .child(user.email + '_avatar')
-                            .getDownloadURL()
-                            .then(
-                              (url) => setState(
-                                () {
-                                  usersDb.doc(user.uid).set(
-                                    {
-                                      'username': data['username'],
-                                      'avatarUrl': url
-                                    },
-                                  );
-                                },
-                              ),
-                            );
+                        String url = await (await uploadTask.onComplete)
+                            .ref
+                            .getDownloadURL();
+                        setState(() {
+                          usersDb.doc(user.uid).set(
+                            {'username': data['username'], 'avatarUrl': url},
+                          );
+                        });
                       },
                       child: CircleAvatar(
                         radius: 100,
@@ -136,7 +129,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     Divider(),
                     FlatButton(
                       color: Theme.of(context).primaryColor,
-                      onPressed: () async {},
+                      onPressed: () {
+                        Get.to(PostSlotScreen());
+                      },
                       child: Text('Add new parking slot'),
                     ),
                     FlatButton(

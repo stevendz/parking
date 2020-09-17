@@ -20,6 +20,7 @@ dependencies:
   get: ^3.8.0
   fab_circular_menu: ^1.0.0
   image_picker: ^0.6.7+7
+  uuid: ^2.2.2
 
 dev_dependencies:
   flutter_test:
