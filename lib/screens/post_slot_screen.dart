@@ -83,6 +83,7 @@ class _PostSlotScreenState extends State<PostSlotScreen> {
       'daily': dailyController.text,
       'hourly': hourlyController.text,
       'imageUrl': slotImage,
+      'userUid': user.uid,
     });
   }
 
@@ -157,7 +158,10 @@ class _PostSlotScreenState extends State<PostSlotScreen> {
                                     Icons.add_a_photo,
                                     color: Colors.grey,
                                   )
-                                : Image.network(slotImage),
+                                : Image.network(
+                                    slotImage,
+                                    fit: BoxFit.cover,
+                                  ),
                           ),
                         ),
                         SizedBox(width: 20),

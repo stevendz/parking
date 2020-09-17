@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 
@@ -11,6 +12,7 @@ class SlotAlertDialog extends StatefulWidget {
 }
 
 class _SlotAlertDialogState extends State<SlotAlertDialog> {
+  String userAvatar;
   String location = '';
   getLocation() async {
     List<Placemark> placemarks = await Geolocator().placemarkFromCoordinates(
@@ -26,8 +28,21 @@ class _SlotAlertDialogState extends State<SlotAlertDialog> {
 
   @override
   void initState() {
-    getLocation();
     super.initState();
+    getLocation();
+    getUserAvatar();
+  }
+
+  getUserAvatar() async {
+    String userUid = widget.slot['userUid'];
+    String url = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(userUid)
+        .get()
+        .then((value) => value.data()['avatarUrl']);
+    setState(() {
+      userAvatar = url;
+    });
   }
 
   @override
@@ -40,6 +55,11 @@ class _SlotAlertDialogState extends State<SlotAlertDialog> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
+              CircleAvatar(
+                backgroundImage:
+                    userAvatar != null ? NetworkImage(userAvatar) : null,
+              ),
+              SizedBox(width: 10),
               Expanded(child: Text(location)),
               GestureDetector(
                 child: Icon(
@@ -60,8 +80,9 @@ class _SlotAlertDialogState extends State<SlotAlertDialog> {
               borderRadius: BorderRadius.circular(3),
               image: DecorationImage(
                 fit: BoxFit.cover,
-                image: NetworkImage(
-                    'https://firebasestorage.googleapis.com/v0/b/parking-41df9.appspot.com/o/slot.jpg?alt=media&token=1015cf8b-0613-4c0d-b42d-df7341a0ee5f'),
+                image: NetworkImage(widget.slot['imageUrl'] != null
+                    ? widget.slot['imageUrl']
+                    : 'https://firebasestorage.googleapis.com/v0/b/parking-41df9.appspot.com/o/slot.jpg?alt=media&token=1015cf8b-0613-4c0d-b42d-df7341a0ee5f'),
               ),
             ),
           ),
