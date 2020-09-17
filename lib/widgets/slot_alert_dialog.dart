@@ -83,7 +83,7 @@ class _SlotAlertDialogState extends State<SlotAlertDialog> {
                 fit: BoxFit.cover,
                 image: NetworkImage(widget.slot['imageUrl'] != null
                     ? widget.slot['imageUrl']
-                    : 'https://firebasestorage.googleapis.com/v0/b/parking-41df9.appspot.com/o/slot.jpg?alt=media&token=1015cf8b-0613-4c0d-b42d-df7341a0ee5f'),
+                    : 'https://d27p8o2qkwv41j.cloudfront.net/wp-content/uploads/2018/09/shutterstock_1053846248-e1537260333858.jpg'),
               ),
             ),
           ),
