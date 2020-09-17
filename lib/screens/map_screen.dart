@@ -12,20 +12,74 @@ class MapScreen extends StatefulWidget {
 }
 
 class _MapScreenState extends State<MapScreen> {
-  Position position = Position(
-      latitude: 58.5638133,
-      longitude: 18.0425983); //Random position for debugging
+  Position position;
   User user;
+  String username;
+  bool isSearching = false;
   List<Marker> markers = [];
+  GoogleMapController mapController;
   CollectionReference slotsDb = FirebaseFirestore.instance.collection('slots');
+  CollectionReference usersDb = FirebaseFirestore.instance.collection('users');
 
-  initState() {
+  @override
+  void initState() {
     super.initState();
+    //Random position for debugging
+    position = Position(
+      latitude: 58.5638133,
+      longitude: 18.0425983,
+    );
     user = FirebaseAuth.instance.currentUser;
     loadSlots();
+    getUsername();
   }
 
-  loadSlots() {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        centerTitle: true,
+        title: isSearching
+            ? TextFormField(autofocus: true)
+            : Text(
+                'Hello ' + (username != null ? username : 'No User'),
+              ),
+        leading: Visibility(
+          visible: isSearching,
+          child: Icon(Icons.search),
+        ),
+        actions: <Widget>[
+          Visibility(
+            visible: isSearching,
+            child: IconButton(
+              icon: Icon(Icons.cancel),
+              onPressed: toggleSearchbar,
+            ),
+          )
+        ],
+      ),
+      body: GoogleMap(
+        onMapCreated: (GoogleMapController controller) {
+          mapController = controller;
+        },
+        markers: Set.from(markers),
+        onLongPress: (argument) {
+          print(argument);
+        },
+        initialCameraPosition: CameraPosition(
+          target: LatLng(position.latitude, position.longitude),
+          zoom: 14,
+        ),
+      ),
+      floatingActionButton: FabMenu(
+        moveToLocation: moveToLocation,
+        toggleSearchbar: toggleSearchbar,
+      ),
+    );
+  }
+
+  void loadSlots() {
     slotsDb.get().then(
           (QuerySnapshot querySnapshot) => {
             querySnapshot.docs.forEach(
@@ -53,7 +107,7 @@ class _MapScreenState extends State<MapScreen> {
         );
   }
 
-  moveToLocation() async {
+  void moveToLocation() async {
     try {
       Position position = await Geolocator()
           .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
@@ -78,30 +132,20 @@ class _MapScreenState extends State<MapScreen> {
     }
   }
 
-  GoogleMapController mapController;
+  void getUsername() async {
+    String username = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .get()
+        .then((value) => value.data()['username']);
+    setState(() {
+      this.username = username;
+    });
+  }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        centerTitle: true,
-        title: Text(user != null ? user.email : 'Guest'),
-      ),
-      body: GoogleMap(
-        onMapCreated: (GoogleMapController controller) {
-          mapController = controller;
-        },
-        markers: Set.from(markers),
-        onLongPress: (argument) {
-          print(argument);
-        },
-        initialCameraPosition: CameraPosition(
-          target: LatLng(position.latitude, position.longitude),
-          zoom: 14,
-        ),
-      ),
-      floatingActionButton: FabMenu(moveToLocation: moveToLocation),
-    );
+  void toggleSearchbar() {
+    setState(() {
+      isSearching = !isSearching;
+    });
   }
 }

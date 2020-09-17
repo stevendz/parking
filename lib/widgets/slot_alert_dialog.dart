@@ -22,30 +22,6 @@ class _SlotAlertDialogState extends State<SlotAlertDialog> {
     getUserAvatar();
   }
 
-  getLocation() async {
-    List<Placemark> placemarks = await Geolocator().placemarkFromCoordinates(
-        widget.slot["latitude"], widget.slot["longitude"]);
-    setState(() {
-      location = placemarks[0].thoroughfare +
-          ', ' +
-          placemarks[0].postalCode +
-          ', ' +
-          placemarks[0].locality;
-    });
-  }
-
-  getUserAvatar() async {
-    String userUid = widget.slot['userUid'];
-    String url = await FirebaseFirestore.instance
-        .collection('users')
-        .doc(userUid)
-        .get()
-        .then((value) => value.data()['avatarUrl']);
-    setState(() {
-      userAvatar = url;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -83,7 +59,7 @@ class _SlotAlertDialogState extends State<SlotAlertDialog> {
                 fit: BoxFit.cover,
                 image: NetworkImage(widget.slot['imageUrl'] != null
                     ? widget.slot['imageUrl']
-                    : 'https://d27p8o2qkwv41j.cloudfront.net/wp-content/uploads/2018/09/shutterstock_1053846248-e1537260333858.jpg'),
+                    : 'https://firebasestorage.googleapis.com/v0/b/parking-41df9.appspot.com/o/slot.jpg?alt=media'),
               ),
             ),
           ),
@@ -94,13 +70,13 @@ class _SlotAlertDialogState extends State<SlotAlertDialog> {
               Text(
                 'hourly: ' +
                     (widget.slot["hourly"] != null
-                        ? (widget.slot["hourly"].toString() + '€')
+                        ? (widget.slot["hourly"].toString() + '\$')
                         : '-'),
               ),
               Text(
                 'daily: ' +
                     (widget.slot["daily"] != null
-                        ? (widget.slot["daily"].toString() + '€')
+                        ? (widget.slot["daily"].toString() + '\$')
                         : '-'),
               ),
             ],
@@ -124,5 +100,29 @@ class _SlotAlertDialogState extends State<SlotAlertDialog> {
         ],
       ),
     );
+  }
+
+  void getLocation() async {
+    List<Placemark> placemarks = await Geolocator().placemarkFromCoordinates(
+        widget.slot["latitude"], widget.slot["longitude"]);
+    setState(() {
+      location = placemarks[0].thoroughfare +
+          ', ' +
+          placemarks[0].postalCode +
+          ', ' +
+          placemarks[0].locality;
+    });
+  }
+
+  void getUserAvatar() async {
+    String userUid = widget.slot['userUid'];
+    String url = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(userUid)
+        .get()
+        .then((value) => value.data()['avatarUrl']);
+    setState(() {
+      userAvatar = url;
+    });
   }
 }

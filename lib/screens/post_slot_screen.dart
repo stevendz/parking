@@ -4,8 +4,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:parking/screens/map_screen.dart';
+import 'package:parking/widgets/image_uploader.dart';
+import 'package:parking/widgets/post_slot_form.dart';
 import 'package:uuid/uuid.dart';
 
 class PostSlotScreen extends StatefulWidget {
@@ -14,6 +17,7 @@ class PostSlotScreen extends StatefulWidget {
 }
 
 class _PostSlotScreenState extends State<PostSlotScreen> {
+  StorageReference imgStorage = FirebaseStorage.instance.ref();
   String uuid = Uuid().v1();
   Position position;
   Position selectedPosition;
@@ -28,7 +32,8 @@ class _PostSlotScreenState extends State<PostSlotScreen> {
   TextEditingController dailyController = TextEditingController();
   TextEditingController hourlyController = TextEditingController();
 
-  initState() {
+  @override
+  void initState() {
     super.initState();
     user = FirebaseAuth.instance.currentUser;
     selectedPosition = position;
@@ -36,61 +41,8 @@ class _PostSlotScreenState extends State<PostSlotScreen> {
     getPosition();
   }
 
-  getPosition() async {
-    Position position = await Geolocator()
-        .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-    if (position != null) {
-      setState(() {
-        this.position = position;
-      });
-    }
-  }
-
-  setMarker() {
-    setState(() {
-      markers = [
-        Marker(
-          position:
-              LatLng(selectedPosition.latitude, selectedPosition.longitude),
-          markerId: MarkerId('CurrentSelectedLatLng'),
-        )
-      ];
-      getLocation();
-    });
-  }
-
-  getLocation() async {
-    List<Placemark> placemarks = await Geolocator().placemarkFromCoordinates(
-        selectedPosition.latitude, selectedPosition.longitude);
-    if (placemarks != null && placemarks.isNotEmpty) {
-      setState(() {
-        selectedLocation = placemarks[0].thoroughfare +
-            ', ' +
-            placemarks[0].postalCode +
-            ', ' +
-            placemarks[0].locality;
-      });
-    }
-  }
-
-  postSlot() {
-    // TODO: Add validation
-    CollectionReference slotsDb =
-        FirebaseFirestore.instance.collection('slots');
-    slotsDb.doc(uuid).set({
-      'title': titleController.text,
-      'latitude': selectedPosition.latitude,
-      'longitude': selectedPosition.longitude,
-      'daily': dailyController.text,
-      'hourly': hourlyController.text,
-      'imageUrl': slotImage,
-      'userUid': user.uid,
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
-    StorageReference imgStorage = FirebaseStorage.instance.ref();
     if (position == null) {
       return Material(child: Center(child: Text("loading...")));
     }
@@ -101,25 +53,20 @@ class _PostSlotScreenState extends State<PostSlotScreen> {
       ),
       body: Column(
         children: <Widget>[
-          MediaQuery.of(context).viewInsets.bottom > 1
-              ? Container()
-              : Container(
-                  height: MediaQuery.of(context).size.height * 0.3,
-                  child: GoogleMap(
-                    markers: Set.from(markers),
-                    initialCameraPosition: CameraPosition(
-                      target: LatLng(position.latitude, position.longitude),
-                      zoom: 14,
-                    ),
-                    onTap: (position) {
-                      selectedPosition = Position(
-                        latitude: position.latitude,
-                        longitude: position.longitude,
-                      );
-                      setMarker();
-                    },
-                  ),
+          Visibility(
+            visible: MediaQuery.of(context).viewInsets.bottom < 1,
+            child: Container(
+              height: MediaQuery.of(context).size.height * 0.3,
+              child: GoogleMap(
+                markers: Set.from(markers),
+                initialCameraPosition: CameraPosition(
+                  target: LatLng(position.latitude, position.longitude),
+                  zoom: 14,
                 ),
+                onTap: setPosition,
+              ),
+            ),
+          ),
           Expanded(
             child: Padding(
               padding: EdgeInsets.all(15),
@@ -127,81 +74,20 @@ class _PostSlotScreenState extends State<PostSlotScreen> {
                 children: <Widget>[
                   Row(
                     children: <Widget>[
-                      GestureDetector(
-                        onTap: () async {
-                          PickedFile pickedImage = await ImagePicker()
-                              .getImage(source: ImageSource.gallery);
-                          String imageId =
-                              selectedPosition.latitude.toString() +
-                                  '_' +
-                                  position.longitude.toString();
-                          StorageUploadTask uploadTask = imgStorage
-                              .child(imageId)
-                              .putFile(File(pickedImage.path));
-
-                          String url = await (await uploadTask.onComplete)
-                              .ref
-                              .getDownloadURL();
-                          setState(() {
-                            slotImage = url;
-                          });
-                        },
-                        child: Container(
-                          width: 50,
-                          height: 50,
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              color: Colors.grey,
-                            ),
-                          ),
-                          child: slotImage == null
-                              ? Icon(
-                                  Icons.add_a_photo,
-                                  color: Colors.grey,
-                                )
-                              : Image.network(
-                                  slotImage,
-                                  fit: BoxFit.cover,
-                                ),
-                        ),
+                      ImageUploader(
+                        image: slotImage,
+                        uploadImage: uploadImage,
                       ),
                       SizedBox(width: 20),
                       Text(selectedLocation),
                     ],
                   ),
                   Divider(),
-                  TextFormField(
-                    controller: titleController,
-                    decoration: InputDecoration(helperText: 'Title'),
-                  ),
-                  TextFormField(
-                    controller: descriptionController,
-                    decoration: InputDecoration(helperText: 'Description'),
-                  ),
-                  Row(
-                    children: <Widget>[
-                      Expanded(
-                        child: TextFormField(
-                          controller: hourlyController,
-                          keyboardType: TextInputType.number,
-                          decoration: InputDecoration(
-                            helperText: 'Daily',
-                            suffixIcon: Icon(Icons.attach_money),
-                          ),
-                        ),
-                      ),
-                      SizedBox(width: 15),
-                      Expanded(
-                        child: TextFormField(
-                          controller: dailyController,
-                          keyboardType: TextInputType.number,
-                          decoration: InputDecoration(
-                            helperText: 'Hourly',
-                            suffixIcon: Icon(Icons.attach_money),
-                          ),
-                        ),
-                      ),
-                    ],
+                  PostSlotForm(
+                    titleController: titleController,
+                    descriptionController: descriptionController,
+                    hourlyController: hourlyController,
+                    dailyController: dailyController,
                   ),
                 ],
               ),
@@ -215,5 +101,75 @@ class _PostSlotScreenState extends State<PostSlotScreen> {
         ],
       ),
     );
+  }
+
+  void getPosition() async {
+    Position position = await Geolocator()
+        .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    if (position != null) {
+      setState(() {
+        this.position = position;
+      });
+    }
+  }
+
+  void setPosition(tappedPosition) {
+    selectedPosition = Position(
+      latitude: tappedPosition.latitude,
+      longitude: tappedPosition.longitude,
+    );
+    setState(() {
+      markers = [
+        Marker(
+          position:
+              LatLng(selectedPosition.latitude, selectedPosition.longitude),
+          markerId: MarkerId('CurrentSelectedLatLng'),
+        )
+      ];
+      getLocation();
+    });
+  }
+
+  void getLocation() async {
+    List<Placemark> placemarks = await Geolocator().placemarkFromCoordinates(
+        selectedPosition.latitude, selectedPosition.longitude);
+    if (placemarks != null && placemarks.isNotEmpty) {
+      setState(() {
+        selectedLocation = placemarks[0].thoroughfare +
+            ', ' +
+            placemarks[0].postalCode +
+            ', ' +
+            placemarks[0].locality;
+      });
+    }
+  }
+
+  void postSlot() {
+    // TODO: Add validation
+    CollectionReference slotsDb =
+        FirebaseFirestore.instance.collection('slots');
+    slotsDb.doc(uuid).set({
+      'title': titleController.text,
+      'latitude': selectedPosition.latitude,
+      'longitude': selectedPosition.longitude,
+      'daily': dailyController.text,
+      'hourly': hourlyController.text,
+      'imageUrl': slotImage,
+      'userUid': user.uid,
+    });
+    Get.off(MapScreen());
+  }
+
+  void uploadImage(pickedImage) async {
+    String imageId = selectedPosition.latitude.toString() +
+        '_' +
+        position.longitude.toString();
+    StorageUploadTask uploadTask =
+        imgStorage.child(imageId).putFile(File(pickedImage.path));
+
+    String url = await (await uploadTask.onComplete).ref.getDownloadURL();
+    setState(() {
+      slotImage = url;
+    });
   }
 }
