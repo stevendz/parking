@@ -31,6 +31,7 @@ class _PostSlotScreenState extends State<PostSlotScreen> {
   TextEditingController descriptionController = TextEditingController();
   TextEditingController dailyController = TextEditingController();
   TextEditingController hourlyController = TextEditingController();
+  final postSlotFormKey = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -94,6 +95,7 @@ class _PostSlotScreenState extends State<PostSlotScreen> {
                     descriptionController: descriptionController,
                     hourlyController: hourlyController,
                     dailyController: dailyController,
+                    formKey: postSlotFormKey,
                   ),
                 ],
               ),
@@ -151,19 +153,20 @@ class _PostSlotScreenState extends State<PostSlotScreen> {
   }
 
   void postSlot() {
-    // TODO: Add validation
-    CollectionReference slotsDb =
-        FirebaseFirestore.instance.collection('slots');
-    slotsDb.doc(uuid).set({
-      'title': titleController.text,
-      'latitude': selectedPosition.latitude,
-      'longitude': selectedPosition.longitude,
-      'daily': dailyController.text,
-      'hourly': hourlyController.text,
-      'imageUrl': slotImage,
-      'userUid': user.uid,
-    });
-    Get.off(MapScreen());
+    if (postSlotFormKey.currentState.validate() && slotImage != null) {
+      CollectionReference slotsDb =
+          FirebaseFirestore.instance.collection('slots');
+      slotsDb.doc(uuid).set({
+        'title': titleController.text,
+        'latitude': selectedPosition.latitude,
+        'longitude': selectedPosition.longitude,
+        'daily': dailyController.text,
+        'hourly': hourlyController.text,
+        'imageUrl': slotImage,
+        'userUid': user.uid,
+      });
+      Get.off(MapScreen());
+    }
   }
 
   void uploadImage(pickedImage) async {
