@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:parking/screens/auth_screen.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:parking/screens/my_slots_screen.dart';
 import 'package:parking/screens/post_slot_screen.dart';
 import 'package:parking/widgets/change_username_alert_dialog.dart';
 
@@ -83,7 +84,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   FlatButton(
                     color: Theme.of(context).primaryColorLight,
-                    onPressed: () async {},
+                    onPressed: () {
+                      Get.to(MySlotsScreen());
+                    },
                     child: Text('Manage parking slots'),
                   ),
                   Divider(),
