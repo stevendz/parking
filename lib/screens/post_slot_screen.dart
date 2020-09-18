@@ -74,9 +74,15 @@ class _PostSlotScreenState extends State<PostSlotScreen> {
                 children: <Widget>[
                   Row(
                     children: <Widget>[
-                      ImageUploader(
-                        image: slotImage,
-                        uploadImage: uploadImage,
+                      Visibility(
+                        visible: selectedPosition != null,
+                        maintainSize: true,
+                        maintainAnimation: true,
+                        maintainState: true,
+                        child: ImageUploader(
+                          image: slotImage,
+                          uploadImage: uploadImage,
+                        ),
                       ),
                       SizedBox(width: 20),
                       Text(selectedLocation),
