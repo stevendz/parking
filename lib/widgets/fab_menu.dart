@@ -1,15 +1,16 @@
 import 'package:fab_circular_menu/fab_circular_menu.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:parking/screens/profile_screen.dart';
 
 class FabMenu extends StatelessWidget {
   final Function moveToLocation;
-  final Function toggleSearchbar;
+  final Function searchLocation;
   const FabMenu({
     Key key,
     @required this.moveToLocation,
-    @required this.toggleSearchbar,
+    @required this.searchLocation,
   }) : super(key: key);
 
   @override
@@ -44,14 +45,20 @@ class FabMenu extends StatelessWidget {
         ),
         RawMaterialButton(
           elevation: 0,
-          onPressed: toggleSearchbar,
+          onPressed: searchLocation,
           fillColor: Theme.of(context).primaryColorLight,
           shape: CircleBorder(),
           child: Icon(Icons.search),
         ),
         RawMaterialButton(
           elevation: 0,
-          onPressed: moveToLocation,
+          onPressed: () async {
+            await Geolocator()
+                .getCurrentPosition(desiredAccuracy: LocationAccuracy.high)
+                .then(
+                  (position) => moveToLocation(position),
+                );
+          },
           fillColor: Theme.of(context).primaryColorLight,
           shape: CircleBorder(),
           child: Icon(Icons.room),

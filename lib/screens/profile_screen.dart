@@ -39,6 +39,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         if (snapshot.connectionState == ConnectionState.done) {
           Map<String, dynamic> data = snapshot.data.data();
           return Scaffold(
+            resizeToAvoidBottomInset: false,
             appBar: AppBar(
               centerTitle: true,
               title: Text('Profile'),

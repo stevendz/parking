@@ -1,10 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:parking/widgets/fab_menu.dart';
 import 'package:parking/widgets/slot_alert_dialog.dart';
+import 'package:google_maps_webservice/places.dart';
+import '../credentials.dart';
 
 class MapScreen extends StatefulWidget {
   @override
@@ -15,11 +18,11 @@ class _MapScreenState extends State<MapScreen> {
   Position position;
   User user;
   String username;
-  bool isSearching = false;
   List<Marker> markers = [];
   GoogleMapController mapController;
   CollectionReference slotsDb = FirebaseFirestore.instance.collection('slots');
   CollectionReference usersDb = FirebaseFirestore.instance.collection('users');
+  GoogleMapsPlaces places = GoogleMapsPlaces(apiKey: kGoogleApiKey);
 
   @override
   void initState() {
@@ -40,24 +43,9 @@ class _MapScreenState extends State<MapScreen> {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         centerTitle: true,
-        title: isSearching
-            ? TextFormField(autofocus: true)
-            : Text(
-                'Hello ' + (username != null ? username : 'No User'),
-              ),
-        leading: Visibility(
-          visible: isSearching,
-          child: Icon(Icons.search),
+        title: Text(
+          'Hello ' + (username != null ? username : 'No User'),
         ),
-        actions: <Widget>[
-          Visibility(
-            visible: isSearching,
-            child: IconButton(
-              icon: Icon(Icons.cancel),
-              onPressed: toggleSearchbar,
-            ),
-          )
-        ],
       ),
       body: GoogleMap(
         onMapCreated: (GoogleMapController controller) {
@@ -74,9 +62,28 @@ class _MapScreenState extends State<MapScreen> {
       ),
       floatingActionButton: FabMenu(
         moveToLocation: moveToLocation,
-        toggleSearchbar: toggleSearchbar,
+        searchLocation: searchLocation,
       ),
     );
+  }
+
+  Future<void> searchLocation() async {
+    Prediction prediction = await PlacesAutocomplete.show(
+      context: context,
+      apiKey: kGoogleApiKey,
+      mode: Mode.overlay,
+      language: "de",
+      logo: Container(),
+      components: [Component(Component.country, "de")],
+    );
+    if (prediction != null) {
+      PlacesDetailsResponse details =
+          await places.getDetailsByPlaceId(prediction.placeId);
+      moveToLocation(Position(
+        latitude: details.result.geometry.location.lat,
+        longitude: details.result.geometry.location.lng,
+      ));
+    }
   }
 
   void loadSlots() {
@@ -107,29 +114,25 @@ class _MapScreenState extends State<MapScreen> {
         );
   }
 
-  void moveToLocation() async {
-    try {
-      Position position = await Geolocator()
-          .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-      if (position != null) {
-        setState(() {
-          this.position = position;
-        });
-        mapController.animateCamera(
-          CameraUpdate.newCameraPosition(
-            CameraPosition(
-              zoom: 14,
-              target: LatLng(
-                position.latitude,
-                position.longitude,
-              ),
+  void moveToLocation(newPosition) async {
+    if (newPosition != null) {
+      setState(() {
+        this.position = newPosition;
+      });
+      mapController.animateCamera(
+        CameraUpdate.newCameraPosition(
+          CameraPosition(
+            zoom: 14,
+            target: LatLng(
+              position.latitude,
+              position.longitude,
             ),
           ),
-        );
-      }
-    } catch (e) {
-      print(e);
+        ),
+      );
+      return;
     }
+    print('No Location');
   }
 
   void getUsername() async {
@@ -140,12 +143,6 @@ class _MapScreenState extends State<MapScreen> {
         .then((value) => value.data()['username']);
     setState(() {
       this.username = username;
-    });
-  }
-
-  void toggleSearchbar() {
-    setState(() {
-      isSearching = !isSearching;
     });
   }
 }
