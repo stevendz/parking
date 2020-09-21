@@ -7,10 +7,12 @@ import 'package:parking/screens/profile_screen.dart';
 class FabMenu extends StatelessWidget {
   final Function moveToLocation;
   final Function toggleSearchbar;
+  final Function searchLocation;
   const FabMenu({
     Key key,
     @required this.moveToLocation,
     @required this.toggleSearchbar,
+    @required this.searchLocation,
   }) : super(key: key);
 
   @override
@@ -45,7 +47,7 @@ class FabMenu extends StatelessWidget {
         ),
         RawMaterialButton(
           elevation: 0,
-          onPressed: toggleSearchbar,
+          onPressed: searchLocation,
           fillColor: Theme.of(context).primaryColorLight,
           shape: CircleBorder(),
           child: Icon(Icons.search),
