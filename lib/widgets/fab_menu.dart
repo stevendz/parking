@@ -6,12 +6,10 @@ import 'package:parking/screens/profile_screen.dart';
 
 class FabMenu extends StatelessWidget {
   final Function moveToLocation;
-  final Function toggleSearchbar;
   final Function searchLocation;
   const FabMenu({
     Key key,
     @required this.moveToLocation,
-    @required this.toggleSearchbar,
     @required this.searchLocation,
   }) : super(key: key);
 

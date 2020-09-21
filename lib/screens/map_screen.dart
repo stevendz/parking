@@ -18,7 +18,6 @@ class _MapScreenState extends State<MapScreen> {
   Position position;
   User user;
   String username;
-  bool isSearching = false;
   List<Marker> markers = [];
   GoogleMapController mapController;
   final homeScaffoldKey = GlobalKey<ScaffoldState>();
@@ -45,24 +44,9 @@ class _MapScreenState extends State<MapScreen> {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         centerTitle: true,
-        title: isSearching
-            ? TextFormField(autofocus: true)
-            : Text(
-                'Hello ' + (username != null ? username : 'No User'),
-              ),
-        leading: Visibility(
-          visible: isSearching,
-          child: Icon(Icons.search),
+        title: Text(
+          'Hello ' + (username != null ? username : 'No User'),
         ),
-        actions: <Widget>[
-          Visibility(
-            visible: isSearching,
-            child: IconButton(
-              icon: Icon(Icons.cancel),
-              onPressed: toggleSearchbar,
-            ),
-          )
-        ],
       ),
       body: GoogleMap(
         onMapCreated: (GoogleMapController controller) {
@@ -79,7 +63,6 @@ class _MapScreenState extends State<MapScreen> {
       ),
       floatingActionButton: FabMenu(
         moveToLocation: moveToLocation,
-        toggleSearchbar: toggleSearchbar,
         searchLocation: searchLocation,
       ),
     );
@@ -167,12 +150,6 @@ class _MapScreenState extends State<MapScreen> {
         .then((value) => value.data()['username']);
     setState(() {
       this.username = username;
-    });
-  }
-
-  void toggleSearchbar() {
-    setState(() {
-      isSearching = !isSearching;
     });
   }
 }
