@@ -105,13 +105,15 @@ class _SlotAlertDialogState extends State<SlotAlertDialog> {
   void getLocation() async {
     List<Placemark> placemarks = await Geolocator().placemarkFromCoordinates(
         widget.slot["latitude"], widget.slot["longitude"]);
-    setState(() {
-      location = placemarks[0].thoroughfare +
-          ', ' +
-          placemarks[0].postalCode +
-          ', ' +
-          placemarks[0].locality;
-    });
+    if (placemarks != null) {
+      setState(() {
+        location = placemarks[0].thoroughfare +
+            ', ' +
+            placemarks[0].postalCode +
+            ', ' +
+            placemarks[0].locality;
+      });
+    }
   }
 
   void getUserAvatar() async {

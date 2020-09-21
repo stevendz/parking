@@ -107,29 +107,25 @@ class _MapScreenState extends State<MapScreen> {
         );
   }
 
-  void moveToLocation() async {
-    try {
-      Position position = await Geolocator()
-          .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-      if (position != null) {
-        setState(() {
-          this.position = position;
-        });
-        mapController.animateCamera(
-          CameraUpdate.newCameraPosition(
-            CameraPosition(
-              zoom: 14,
-              target: LatLng(
-                position.latitude,
-                position.longitude,
-              ),
+  void moveToLocation(newPosition) async {
+    if (newPosition != null) {
+      setState(() {
+        this.position = newPosition;
+      });
+      mapController.animateCamera(
+        CameraUpdate.newCameraPosition(
+          CameraPosition(
+            zoom: 14,
+            target: LatLng(
+              position.latitude,
+              position.longitude,
             ),
           ),
-        );
-      }
-    } catch (e) {
-      print(e);
+        ),
+      );
+      return;
     }
+    print('No Location');
   }
 
   void getUsername() async {
