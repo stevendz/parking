@@ -20,7 +20,6 @@ class _MapScreenState extends State<MapScreen> {
   String username;
   List<Marker> markers = [];
   GoogleMapController mapController;
-  final homeScaffoldKey = GlobalKey<ScaffoldState>();
   CollectionReference slotsDb = FirebaseFirestore.instance.collection('slots');
   CollectionReference usersDb = FirebaseFirestore.instance.collection('users');
   GoogleMapsPlaces places = GoogleMapsPlaces(apiKey: kGoogleApiKey);
@@ -69,7 +68,7 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   Future<void> searchLocation() async {
-    Prediction p = await PlacesAutocomplete.show(
+    Prediction prediction = await PlacesAutocomplete.show(
       context: context,
       apiKey: kGoogleApiKey,
       mode: Mode.overlay,
@@ -77,19 +76,13 @@ class _MapScreenState extends State<MapScreen> {
       logo: Container(),
       components: [Component(Component.country, "de")],
     );
-
-    displayPrediction(p, homeScaffoldKey.currentState);
-  }
-
-  Future<Null> displayPrediction(
-      Prediction prediction, ScaffoldState scaffold) async {
     if (prediction != null) {
-      // get detail (lat/lng)
-      PlacesDetailsResponse position =
+      PlacesDetailsResponse details =
           await places.getDetailsByPlaceId(prediction.placeId);
-      final lat = position.result.geometry.location.lat;
-      final lng = position.result.geometry.location.lng;
-      print(lat);
+      moveToLocation(Position(
+        latitude: details.result.geometry.location.lat,
+        longitude: details.result.geometry.location.lng,
+      ));
     }
   }
 
