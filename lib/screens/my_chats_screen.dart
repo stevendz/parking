@@ -29,12 +29,10 @@ class _MyChatsScreenState extends State<MyChatsScreen> {
     setState(() {
       chatIds = chatssnap.data()['chats'];
     });
-    print(chatssnap);
   }
 
   @override
   Widget build(BuildContext context) {
-    print(chatIds);
     return StreamBuilder<QuerySnapshot>(
       stream: chatsDb.snapshots(),
       builder: (context, snapshot) {

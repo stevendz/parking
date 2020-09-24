@@ -33,7 +33,6 @@ class _MapScreenState extends State<MapScreen> {
       longitude: 18.0425983,
     );
     user = FirebaseAuth.instance.currentUser;
-    print(user.uid);
     loadSlots();
     getUsername();
   }
