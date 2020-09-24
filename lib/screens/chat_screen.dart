@@ -3,6 +3,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class ChatScreen extends StatefulWidget {
+  final String chatId;
+
+  const ChatScreen({Key key, this.chatId = 'iXO4GMVfU1Ldjj5Fn7HQ'})
+      : super(key: key);
   @override
   _ChatScreenState createState() => _ChatScreenState();
 }
@@ -18,7 +22,7 @@ class _ChatScreenState extends State<ChatScreen> {
   void initState() {
     super.initState();
     user = FirebaseAuth.instance.currentUser;
-    messagesDb = chatsDb.doc('iXO4GMVfU1Ldjj5Fn7HQ').collection('messages');
+    messagesDb = chatsDb.doc(widget.chatId).collection('messages');
   }
 
   @override
@@ -31,7 +35,6 @@ class _ChatScreenState extends State<ChatScreen> {
         }
         if (snapshot.hasData) {
           var data = snapshot.data.docs.toList();
-          print(data[0].data()['message']);
           return Scaffold(
             appBar: AppBar(
               centerTitle: true,
