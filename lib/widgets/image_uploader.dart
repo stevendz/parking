@@ -6,10 +6,12 @@ class ImageUploader extends StatelessWidget {
     Key key,
     @required this.image,
     @required this.uploadImage,
+    @required this.selectImageReminder,
   }) : super(key: key);
 
   final Function uploadImage;
   final String image;
+  final bool selectImageReminder;
 
   @override
   Widget build(BuildContext context) {
@@ -20,13 +22,13 @@ class ImageUploader extends StatelessWidget {
         height: 50,
         decoration: BoxDecoration(
           border: Border.all(
-            color: Colors.grey,
+            color: selectImageReminder ? Colors.red : Colors.grey,
           ),
         ),
         child: image == null
             ? Icon(
                 Icons.add_a_photo,
-                color: Colors.grey,
+                color: selectImageReminder ? Colors.red : Colors.grey,
               )
             : Image.network(
                 image,
@@ -39,6 +41,8 @@ class ImageUploader extends StatelessWidget {
   void upload() async {
     PickedFile pickedImage =
         await ImagePicker().getImage(source: ImageSource.gallery);
-    uploadImage(pickedImage);
+    if (pickedImage != null) {
+      uploadImage(pickedImage);
+    }
   }
 }
