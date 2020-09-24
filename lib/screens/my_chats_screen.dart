@@ -15,7 +15,7 @@ class _MyChatsScreenState extends State<MyChatsScreen> {
   static CollectionReference chatsDb =
       FirebaseFirestore.instance.collection('chats');
   User user;
-  var chatIds;
+  List<String> chatPartners = [];
 
   @override
   void initState() {
@@ -27,7 +27,8 @@ class _MyChatsScreenState extends State<MyChatsScreen> {
   getChats() async {
     var chatssnap = await usersDb.doc(user.uid).get();
     setState(() {
-      chatIds = chatssnap.data()['chats'];
+      chatssnap.data()['chats'].forEach((chat) =>
+          {chatPartners.add(chat.toString().replaceAll(user.uid, ''))});
     });
   }
 
@@ -39,7 +40,7 @@ class _MyChatsScreenState extends State<MyChatsScreen> {
         if (snapshot.hasError) {
           return Text("Something went wrong");
         }
-        if (snapshot.hasData && chatIds != null) {
+        if (snapshot.hasData && chatPartners != null) {
           return Scaffold(
             appBar: AppBar(
               centerTitle: true,
@@ -47,18 +48,18 @@ class _MyChatsScreenState extends State<MyChatsScreen> {
             ),
             body: ListView.builder(
               padding: EdgeInsets.all(10),
-              itemCount: chatIds.length,
+              itemCount: chatPartners.length,
               itemBuilder: (context, index) {
                 return FlatButton(
                   onPressed: () {
                     Get.to(
                       ChatScreen(
-                        chatId: chatIds[index],
+                        chatPartner: chatPartners[index],
                       ),
                     );
                   },
                   child: Text(
-                    chatIds[index],
+                    chatPartners[index],
                   ),
                 );
               },

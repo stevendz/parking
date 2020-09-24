@@ -116,7 +116,7 @@ class _SlotAlertDialogState extends State<SlotAlertDialog> {
                         Get.back();
                         Get.to(
                           ChatScreen(
-                            chatId: user.uid + widget.slot['userUid'],
+                            chatPartner: widget.slot['userUid'],
                           ),
                         );
                       },

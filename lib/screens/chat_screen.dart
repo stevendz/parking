@@ -4,9 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
 class ChatScreen extends StatefulWidget {
-  final String chatId;
+  final String chatPartner;
 
-  const ChatScreen({Key key, this.chatId}) : super(key: key);
+  const ChatScreen({
+    Key key,
+    this.chatPartner,
+  }) : super(key: key);
   @override
   _ChatScreenState createState() => _ChatScreenState();
 }
@@ -20,13 +23,14 @@ class _ChatScreenState extends State<ChatScreen> {
   TextEditingController chatController = TextEditingController();
   String uuid = Uuid().v1();
   User user;
+  String chatId;
 
   @override
   void initState() {
     super.initState();
     user = FirebaseAuth.instance.currentUser;
-    messagesDb = chatsDb.doc(widget.chatId).collection('messages');
-    checkIfChatExists();
+    chatId = user.uid + widget.chatPartner;
+    messagesDb = chatsDb.doc(chatId).collection('messages');
   }
 
   checkIfChatExists() async {
@@ -34,12 +38,15 @@ class _ChatScreenState extends State<ChatScreen> {
     var chatssnap = await usersDb.doc(user.uid).get();
     if (chatssnap.data()['chats'] != null) {
       chatssnap.data()['chats'].forEach((chatId) => {
-            if (chatId == widget.chatId) {exists = true}
+            if (chatId == chatId) {exists = true}
           });
     }
     if (!exists) {
       usersDb.doc(user.uid).update({
-        'chats': FieldValue.arrayUnion([widget.chatId])
+        'chats': FieldValue.arrayUnion([chatId])
+      });
+      usersDb.doc(widget.chatPartner).update({
+        'chats': FieldValue.arrayUnion([chatId])
       });
     }
   }
@@ -90,6 +97,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     FlatButton(
                       color: Theme.of(context).primaryColor,
                       onPressed: () {
+                        checkIfChatExists();
                         messagesDb.doc(uuid).set({
                           'message': chatController.text,
                           'uid': user.uid,
