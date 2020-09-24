@@ -16,6 +16,7 @@ class _MyChatsScreenState extends State<MyChatsScreen> {
       FirebaseFirestore.instance.collection('chats');
   User user;
   List<String> chatPartners = [];
+  List<String> chatIds = [];
 
   @override
   void initState() {
@@ -26,10 +27,22 @@ class _MyChatsScreenState extends State<MyChatsScreen> {
 
   getChats() async {
     var chatssnap = await usersDb.doc(user.uid).get();
-    setState(() {
-      chatssnap.data()['chats'].forEach((chat) =>
-          {chatPartners.add(chat.toString().replaceAll(user.uid, ''))});
-    });
+    if (chatssnap.data()['chats'] != null) {
+      chatssnap.data()['chats'].forEach(
+            (chat) => {
+              chatPartners.add(
+                chat.toString().replaceAll(user.uid, ''),
+              ),
+            },
+          );
+      chatssnap.data()['chats'].forEach(
+            (chat) => {
+              chatIds.add(chat.toString()),
+            },
+          );
+      setState(() {});
+      print(chatIds);
+    }
   }
 
   @override
@@ -46,24 +59,27 @@ class _MyChatsScreenState extends State<MyChatsScreen> {
               centerTitle: true,
               title: Text('Chats'),
             ),
-            body: ListView.builder(
-              padding: EdgeInsets.all(10),
-              itemCount: chatPartners.length,
-              itemBuilder: (context, index) {
-                return FlatButton(
-                  onPressed: () {
-                    Get.to(
-                      ChatScreen(
-                        chatPartner: chatPartners[index],
-                      ),
-                    );
-                  },
-                  child: Text(
-                    chatPartners[index],
+            body: chatPartners.length == 0
+                ? Center(child: Text('You have no active chats'))
+                : ListView.builder(
+                    padding: EdgeInsets.all(10),
+                    itemCount: chatPartners.length,
+                    itemBuilder: (context, index) {
+                      return FlatButton(
+                        onPressed: () {
+                          Get.to(
+                            ChatScreen(
+                              chatPartner: chatPartners[index],
+                              chatId: chatIds[index],
+                            ),
+                          );
+                        },
+                        child: Text(
+                          chatPartners[index],
+                        ),
+                      );
+                    },
                   ),
-                );
-              },
-            ),
           );
         }
         return Material(child: Center(child: Text("loading...")));

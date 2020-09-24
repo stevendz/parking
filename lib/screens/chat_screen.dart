@@ -5,10 +5,12 @@ import 'package:uuid/uuid.dart';
 
 class ChatScreen extends StatefulWidget {
   final String chatPartner;
+  final String chatId;
 
   const ChatScreen({
     Key key,
     this.chatPartner,
+    this.chatId,
   }) : super(key: key);
   @override
   _ChatScreenState createState() => _ChatScreenState();
@@ -22,15 +24,18 @@ class _ChatScreenState extends State<ChatScreen> {
   CollectionReference messagesDb;
   TextEditingController chatController = TextEditingController();
   String uuid = Uuid().v1();
+  String chatUuid = Uuid().v1();
   User user;
-  String chatId;
 
   @override
   void initState() {
     super.initState();
     user = FirebaseAuth.instance.currentUser;
-    chatId = user.uid + widget.chatPartner;
-    messagesDb = chatsDb.doc(chatId).collection('messages');
+    if (widget.chatId != null) {
+      messagesDb = chatsDb.doc(widget.chatId).collection('messages');
+    } else {
+      messagesDb = chatsDb.doc(chatUuid).collection('messages');
+    }
   }
 
   checkIfChatExists() async {
@@ -38,15 +43,16 @@ class _ChatScreenState extends State<ChatScreen> {
     var chatssnap = await usersDb.doc(user.uid).get();
     if (chatssnap.data()['chats'] != null) {
       chatssnap.data()['chats'].forEach((chatId) => {
-            if (chatId == chatId) {exists = true}
+            if (chatId == widget.chatId) {exists = true}
           });
     }
+    print('exists: ' + exists.toString());
     if (!exists) {
       usersDb.doc(user.uid).update({
-        'chats': FieldValue.arrayUnion([chatId])
+        'chats': FieldValue.arrayUnion([chatUuid])
       });
       usersDb.doc(widget.chatPartner).update({
-        'chats': FieldValue.arrayUnion([widget.chatPartner + user.uid])
+        'chats': FieldValue.arrayUnion([chatUuid])
       });
     }
   }
@@ -98,12 +104,14 @@ class _ChatScreenState extends State<ChatScreen> {
                       color: Theme.of(context).primaryColor,
                       onPressed: () {
                         checkIfChatExists();
+                        print(chatUuid);
                         messagesDb.doc(uuid).set({
                           'message': chatController.text,
                           'uid': user.uid,
                         });
                         setState(() {
                           uuid = Uuid().v1();
+                          chatController.text = '';
                         });
                       },
                       child: Text('send'),
