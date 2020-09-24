@@ -25,6 +25,7 @@ class _PostSlotScreenState extends State<PostSlotScreen> {
   String slotImage;
   List<Marker> markers = [];
   User user;
+  bool selectImageReminder = false;
 
   // Controllers
   TextEditingController titleController = TextEditingController();
@@ -83,6 +84,7 @@ class _PostSlotScreenState extends State<PostSlotScreen> {
                         child: ImageUploader(
                           image: slotImage,
                           uploadImage: uploadImage,
+                          selectImageReminder: selectImageReminder,
                         ),
                       ),
                       SizedBox(width: 20),
@@ -153,6 +155,11 @@ class _PostSlotScreenState extends State<PostSlotScreen> {
   }
 
   void postSlot() {
+    if (slotImage == null) {
+      setState(() {
+        selectImageReminder = true;
+      });
+    }
     if (postSlotFormKey.currentState.validate() && slotImage != null) {
       CollectionReference slotsDb =
           FirebaseFirestore.instance.collection('slots');
@@ -179,6 +186,7 @@ class _PostSlotScreenState extends State<PostSlotScreen> {
     String url = await (await uploadTask.onComplete).ref.getDownloadURL();
     setState(() {
       slotImage = url;
+      selectImageReminder = false;
     });
   }
 }

@@ -53,6 +53,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     onTap: () async {
                       PickedFile pickedImage = await ImagePicker()
                           .getImage(source: ImageSource.gallery);
+                      if (pickedImage == null) return;
                       StorageUploadTask uploadTask = imgStorage
                           .child(user.email + '_avatar')
                           .putFile(File(pickedImage.path));
