@@ -54,6 +54,9 @@ class _ChatScreenState extends State<ChatScreen> {
       usersDb.doc(widget.chatPartner).update({
         'chats': FieldValue.arrayUnion([chatUuid])
       });
+      chatsDb.doc(chatUuid).set({
+        'members': [user.uid, widget.chatPartner]
+      });
     }
   }
 

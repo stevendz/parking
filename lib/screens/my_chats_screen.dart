@@ -22,7 +22,6 @@ class _MyChatsScreenState extends State<MyChatsScreen> {
   void initState() {
     super.initState();
     user = FirebaseAuth.instance.currentUser;
-    getChats();
   }
 
   getChats() async {
@@ -30,43 +29,52 @@ class _MyChatsScreenState extends State<MyChatsScreen> {
     if (chatssnap.data()['chats'] != null) {
       chatssnap.data()['chats'].forEach(
             (chat) => {
-              chatPartners.add(
-                chat.toString().replaceAll(user.uid, ''),
-              ),
+              if (!chatIds.contains(chat)) chatIds.add(chat.toString()),
             },
           );
-      chatssnap.data()['chats'].forEach(
-            (chat) => {
-              chatIds.add(chat.toString()),
-            },
-          );
-      setState(() {});
-      print(chatIds);
+      chatIds.asMap().forEach((index, value) {
+        chatsDb.doc(chatIds[index]).get().then((value) => {
+              if (value.data() != null)
+                value.data().forEach((key, value) {
+                  value.forEach(
+                    (member) => {
+                      if (member != user.uid && !chatPartners.contains(member))
+                        {chatPartners.add(member)}
+                    },
+                  );
+                })
+            });
+      });
     }
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
+    if (chatPartners.isEmpty) getChats();
     return StreamBuilder<QuerySnapshot>(
-      stream: chatsDb.snapshots(),
+      stream: usersDb.snapshots(),
       builder: (context, snapshot) {
         if (snapshot.hasError) {
           return Text("Something went wrong");
         }
-        if (snapshot.hasData && chatPartners != null) {
+        if (snapshot.hasData && chatPartners.isNotEmpty) {
           return Scaffold(
             appBar: AppBar(
               centerTitle: true,
               title: Text('Chats'),
             ),
-            body: chatPartners.length == 0
+            body: chatIds.length == 0
                 ? Center(child: Text('You have no active chats'))
                 : ListView.builder(
                     padding: EdgeInsets.all(10),
-                    itemCount: chatPartners.length,
+                    itemCount: chatIds.length,
                     itemBuilder: (context, index) {
-                      return FlatButton(
-                        onPressed: () {
+                      var chatPartnerData = snapshot.data.docs
+                          .where((user) => user.id == chatPartners[index])
+                          .toList();
+                      return ListTile(
+                        onTap: () {
                           Get.to(
                             ChatScreen(
                               chatPartner: chatPartners[index],
@@ -74,8 +82,12 @@ class _MyChatsScreenState extends State<MyChatsScreen> {
                             ),
                           );
                         },
-                        child: Text(
-                          chatPartners[index],
+                        leading: CircleAvatar(
+                          backgroundImage: NetworkImage(
+                              chatPartnerData[0].data()['avatarUrl']),
+                        ),
+                        title: Text(
+                          chatPartnerData[0].data()['username'],
                         ),
                       );
                     },
