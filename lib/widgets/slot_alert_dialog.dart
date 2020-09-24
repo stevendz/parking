@@ -107,19 +107,23 @@ class _SlotAlertDialogState extends State<SlotAlertDialog> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     FlatButton(
-                      onPressed: () {},
+                      onPressed:
+                          user.uid != widget.slot['userUid'] ? () {} : null,
                       child: Text('Book'),
                       color: Theme.of(context).primaryColor,
                     ),
                     FlatButton(
-                      onPressed: () {
-                        Get.back();
-                        Get.to(
-                          ChatScreen(
-                            chatPartner: widget.slot['userUid'],
-                          ),
-                        );
-                      },
+                      onPressed: user.uid != widget.slot['userUid']
+                          ? () {
+                              print(user.uid != widget.slot['userUid']);
+                              Get.back();
+                              Get.to(
+                                ChatScreen(
+                                  chatPartner: widget.slot['userUid'],
+                                ),
+                              );
+                            }
+                          : null,
                       child: Text('Contact'),
                       color: Theme.of(context).primaryColorLight,
                     )
