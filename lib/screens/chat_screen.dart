@@ -6,8 +6,7 @@ import 'package:uuid/uuid.dart';
 class ChatScreen extends StatefulWidget {
   final String chatId;
 
-  const ChatScreen({Key key, this.chatId = 'iXO4GMVfU1Ldjj5Fn7HQ'})
-      : super(key: key);
+  const ChatScreen({Key key, this.chatId}) : super(key: key);
   @override
   _ChatScreenState createState() => _ChatScreenState();
 }
@@ -15,6 +14,8 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   static CollectionReference chatsDb =
       FirebaseFirestore.instance.collection('chats');
+  static CollectionReference usersDb =
+      FirebaseFirestore.instance.collection('users');
   CollectionReference messagesDb;
   TextEditingController chatController = TextEditingController();
   String uuid = Uuid().v1();
@@ -25,6 +26,22 @@ class _ChatScreenState extends State<ChatScreen> {
     super.initState();
     user = FirebaseAuth.instance.currentUser;
     messagesDb = chatsDb.doc(widget.chatId).collection('messages');
+    checkIfChatExists();
+  }
+
+  checkIfChatExists() async {
+    bool exists = false;
+    var chatssnap = await usersDb.doc(user.uid).get();
+    if (chatssnap.data()['chats'] != null) {
+      chatssnap.data()['chats'].forEach((chatId) => {
+            if (chatId == widget.chatId) {exists = true}
+          });
+    }
+    if (!exists) {
+      usersDb.doc(user.uid).update({
+        'chats': FieldValue.arrayUnion([widget.chatId])
+      });
+    }
   }
 
   @override
