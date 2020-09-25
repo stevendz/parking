@@ -23,7 +23,6 @@ class _ChatScreenState extends State<ChatScreen> {
       FirebaseFirestore.instance.collection('users');
   CollectionReference messagesDb;
   TextEditingController chatController = TextEditingController();
-  String uuid = Uuid().v1();
   String chatUuid = Uuid().v1();
   User user;
 
@@ -46,7 +45,6 @@ class _ChatScreenState extends State<ChatScreen> {
             if (chatId == widget.chatId) {exists = true}
           });
     }
-    print('exists: ' + exists.toString());
     if (!exists) {
       usersDb.doc(user.uid).update({
         'chats': FieldValue.arrayUnion([chatUuid])
@@ -70,6 +68,7 @@ class _ChatScreenState extends State<ChatScreen> {
         }
         if (snapshot.hasData) {
           var data = snapshot.data.docs.reversed.toList();
+          data.forEach((element) {});
           return Scaffold(
             appBar: AppBar(
               centerTitle: true,
@@ -107,15 +106,15 @@ class _ChatScreenState extends State<ChatScreen> {
                       color: Theme.of(context).primaryColor,
                       onPressed: () {
                         checkIfChatExists();
-                        print(chatUuid);
-                        messagesDb.doc(uuid).set({
-                          'message': chatController.text,
-                          'uid': user.uid,
-                        });
-                        setState(() {
-                          uuid = Uuid().v1();
-                          chatController.text = '';
-                        });
+                        if (chatController.text.trim().length > 0) {
+                          messagesDb.doc(DateTime.now().toString()).set({
+                            'message': chatController.text,
+                            'uid': user.uid,
+                          });
+                          setState(() {
+                            chatController.text = '';
+                          });
+                        }
                       },
                       child: Text('send'),
                     ),
