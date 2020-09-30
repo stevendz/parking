@@ -6,11 +6,13 @@ import 'package:uuid/uuid.dart';
 class ChatScreen extends StatefulWidget {
   final String chatPartner;
   final String chatId;
+  final String object;
 
   const ChatScreen({
     Key key,
     this.chatPartner,
     this.chatId,
+    this.object,
   }) : super(key: key);
   @override
   _ChatScreenState createState() => _ChatScreenState();
@@ -19,80 +21,57 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   static CollectionReference chatsDb =
       FirebaseFirestore.instance.collection('chats');
-  static CollectionReference usersDb =
-      FirebaseFirestore.instance.collection('users');
-  CollectionReference messagesDb;
   TextEditingController chatController = TextEditingController();
-  String chatUuid = Uuid().v1();
+  String chatUid;
   User user;
+  bool exists = true;
 
   @override
   void initState() {
     super.initState();
     user = FirebaseAuth.instance.currentUser;
-    if (widget.chatId != null) {
-      messagesDb = chatsDb.doc(widget.chatId).collection('messages');
+    if (widget.chatId == null) {
+      chatUid = Uuid().v1();
+      exists = false;
     } else {
-      messagesDb = chatsDb.doc(chatUuid).collection('messages');
-    }
-  }
-
-  checkIfChatExists() async {
-    bool exists = false;
-    var chatssnap = await usersDb.doc(user.uid).get();
-    if (chatssnap.data()['chats'] != null) {
-      chatssnap.data()['chats'].forEach((chatId) => {
-            if (chatId == widget.chatId) {exists = true}
-          });
-    }
-    if (!exists) {
-      usersDb.doc(user.uid).update({
-        'chats': FieldValue.arrayUnion([chatUuid])
-      });
-      usersDb.doc(widget.chatPartner).update({
-        'chats': FieldValue.arrayUnion([chatUuid])
-      });
-      chatsDb.doc(chatUuid).set({
-        'members': [user.uid, widget.chatPartner]
-      });
+      chatUid = widget.chatId;
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<QuerySnapshot>(
-      stream: messagesDb.snapshots(),
+    return StreamBuilder<DocumentSnapshot>(
+      stream: chatsDb.doc(chatUid).snapshots(),
       builder: (context, snapshot) {
         if (snapshot.hasError) {
           return Text("Something went wrong");
         }
         if (snapshot.hasData) {
-          var data = snapshot.data.docs.reversed.toList();
-          data.forEach((element) {});
+          var data = snapshot.data.data() != null
+              ? snapshot.data.data()['messages']
+              : null;
           return Scaffold(
             appBar: AppBar(
               centerTitle: true,
-              title: Text('Chat'),
+              title: FittedBox(child: Text(widget.object)),
             ),
             body: Column(
               children: <Widget>[
-                Expanded(
-                  child: ListView.builder(
-                    padding: EdgeInsets.all(10),
-                    reverse: true,
-                    itemCount: data.length,
-                    itemBuilder: (context, index) {
-                      return Align(
-                        alignment: data[index].data()['uid'] == user.uid
-                            ? Alignment.centerRight
-                            : Alignment.centerLeft,
-                        child: Text(
-                          data[index].data()['message'],
-                        ),
-                      );
-                    },
-                  ),
-                ),
+                data != null
+                    ? Expanded(
+                        child: ListView.builder(
+                            itemCount: data.length,
+                            itemBuilder: (context, index) {
+                              return data[index]['sender'] == user.uid
+                                  ? Align(
+                                      alignment: Alignment.centerRight,
+                                      child: Text(data[index]['message']))
+                                  : Text(data[index]['message']);
+                            }),
+                      )
+                    : Expanded(
+                        child: Container(),
+                      ),
                 Row(
                   children: <Widget>[
                     Expanded(
@@ -105,12 +84,31 @@ class _ChatScreenState extends State<ChatScreen> {
                     FlatButton(
                       color: Theme.of(context).primaryColor,
                       onPressed: () {
-                        checkIfChatExists();
                         if (chatController.text.trim().length > 0) {
-                          messagesDb.doc(DateTime.now().toString()).set({
-                            'message': chatController.text,
-                            'uid': user.uid,
-                          });
+                          if (!exists) {
+                            chatsDb.doc(chatUid).set({
+                              'members': [user.uid, widget.chatPartner],
+                              'object': widget.object,
+                              'messages': FieldValue.arrayUnion([
+                                {
+                                  'message': chatController.text,
+                                  'sender': user.uid,
+                                  'timestamp': DateTime.now()
+                                }
+                              ])
+                            });
+                            exists = true;
+                          } else {
+                            chatsDb.doc(chatUid).update({
+                              'messages': FieldValue.arrayUnion([
+                                {
+                                  'message': chatController.text,
+                                  'sender': user.uid,
+                                  'timestamp': DateTime.now()
+                                }
+                              ])
+                            });
+                          }
                           setState(() {
                             chatController.text = '';
                           });
@@ -119,7 +117,7 @@ class _ChatScreenState extends State<ChatScreen> {
                       child: Text('send'),
                     ),
                   ],
-                )
+                ),
               ],
             ),
           );

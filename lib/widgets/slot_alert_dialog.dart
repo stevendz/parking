@@ -120,6 +120,7 @@ class _SlotAlertDialogState extends State<SlotAlertDialog> {
                               Get.to(
                                 ChatScreen(
                                   chatPartner: widget.slot['userUid'],
+                                  object: location,
                                 ),
                               );
                             }
