@@ -1,9 +1,10 @@
 import 'package:device_preview/device_preview.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:get/get.dart';
 import 'package:parking/screens/splash_screen.dart';
+import 'package:parking/screens/welcome_back_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,10 +27,16 @@ void main() async {
   );
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  User user = FirebaseAuth.instance.currentUser;
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(
+    return MaterialApp(
       locale: DevicePreview.of(context).locale,
       builder: DevicePreview.appBuilder,
       debugShowCheckedModeBanner: false,
@@ -38,7 +45,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.deepPurple,
         primaryColor: Color(0xff795EB7),
       ),
-      home: SplashScreen(),
+      home: user != null ? WelcomeBackScreen() : SplashScreen(),
     );
   }
 }

@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:get/get.dart';
 import 'package:parking/screens/chat_screen.dart';
 import 'package:parking/widgets/primary_button.dart';
 import 'package:parking/widgets/primary_button_border.dart';
@@ -119,11 +118,14 @@ class _SlotAlertDialogState extends State<SlotAlertDialog> {
                       onClick: user.uid != widget.slot['userUid']
                           ? () {
                               print(user.uid != widget.slot['userUid']);
-                              Get.back();
-                              Get.to(
-                                ChatScreen(
-                                  chatPartner: widget.slot['userUid'],
-                                  object: location,
+                              Navigator.pop(context);
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ChatScreen(
+                                    chatPartner: widget.slot['userUid'],
+                                    object: location,
+                                  ),
                                 ),
                               );
                             }

@@ -1,7 +1,6 @@
 import 'package:fab_circular_menu/fab_circular_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:get/get.dart';
 import 'package:parking/screens/my_chats_screen.dart';
 import 'package:parking/screens/profile_screen.dart';
 
@@ -35,7 +34,12 @@ class FabMenu extends StatelessWidget {
         RawMaterialButton(
           elevation: 0,
           onPressed: () {
-            Get.to(ProfileScreen());
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ProfileScreen(),
+              ),
+            );
           },
           fillColor: Colors.white,
           shape: CircleBorder(),
@@ -47,7 +51,12 @@ class FabMenu extends StatelessWidget {
         RawMaterialButton(
           elevation: 0,
           onPressed: () {
-            Get.to(MyChatsScreen());
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => MyChatsScreen(),
+              ),
+            );
           },
           fillColor: Colors.white,
           shape: CircleBorder(),

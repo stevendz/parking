@@ -1,11 +1,9 @@
 import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:parking/screens/auth_screen.dart';
+import 'package:parking/main.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:parking/screens/my_slots_screen.dart';
 import 'package:parking/screens/post_slot_screen.dart';
@@ -86,22 +84,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   PrimaryButton(
                       text: 'Add new parking slot',
                       onClick: () {
-                        Get.to(PostSlotScreen());
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => PostSlotScreen()));
                       },
                       color: Theme.of(context).primaryColor),
                   PrimaryButtonBorder(
                     text: 'Manage parking slots',
                     onClick: () {
-                      Get.to(MySlotsScreen());
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => MySlotsScreen()));
                     },
                     color: Theme.of(context).primaryColor,
                   ),
                   Divider(),
                   PrimaryButton(
                     text: 'Logout',
-                    onClick: () {
-                      Get.to(PostSlotScreen());
-                    },
+                    onClick: signOut,
                     color: Colors.redAccent.shade100,
                   ),
                 ],
@@ -118,7 +120,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void signOut() async {
     await FirebaseAuth.instance.signOut();
     Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (context) => AuthScreen()));
+      context,
+      MaterialPageRoute(
+        builder: (context) => MyApp(),
+      ),
+    );
   }
 
   void updateUsername(newUsername) {
@@ -130,7 +136,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           },
         );
       });
-      Get.back();
+      Navigator.pop(context);
     }
   }
 }

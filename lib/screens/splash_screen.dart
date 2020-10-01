@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:parking/screens/auth_screen.dart';
 import 'package:parking/widgets/primary_button_border.dart';
 import 'package:parking/widgets/primary_button.dart';
@@ -12,7 +11,7 @@ class SplashScreen extends StatelessWidget {
         width: MediaQuery.of(context).size.width,
         decoration: BoxDecoration(
           image: DecorationImage(
-              image: AssetImage('assets/images/background2.png'),
+              image: AssetImage('assets/images/background.png'),
               colorFilter:
                   ColorFilter.mode(Color(0xff795EB7), BlendMode.multiply),
               fit: BoxFit.cover),
@@ -44,7 +43,8 @@ class SplashScreen extends StatelessWidget {
             PrimaryButtonBorder(
               text: 'Sign Up'.toUpperCase(),
               onClick: () {
-                Get.to(AuthScreen());
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => AuthScreen()));
               },
               big: true,
             ),
@@ -52,7 +52,8 @@ class SplashScreen extends StatelessWidget {
             PrimaryButton(
               text: 'login'.toUpperCase(),
               onClick: () {
-                Get.to(AuthScreen());
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => AuthScreen()));
               },
               big: true,
             ),

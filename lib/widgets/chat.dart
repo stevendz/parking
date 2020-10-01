@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:parking/screens/chat_screen.dart';
 
 class Chat extends StatefulWidget {
@@ -29,19 +28,23 @@ class _ChatState extends State<Chat> {
         future: usersDb.doc(widget.chatPartner).get(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Text('Loading...');
+            return Center(child: CircularProgressIndicator());
           } else {
             return ListTile(
               onTap: () {
-                Get.to(
-                  ChatScreen(
-                    chatPartner: snapshot.data.data()['username'],
-                    chatId: widget.id,
-                    object: widget.object,
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ChatScreen(
+                      chatPartner: snapshot.data.data()['username'],
+                      chatId: widget.id,
+                      object: widget.object,
+                    ),
                   ),
                 );
               },
               leading: CircleAvatar(
+                backgroundColor: Theme.of(context).primaryColorLight,
                 backgroundImage:
                     NetworkImage(snapshot.data.data()['avatarUrl']),
               ),

@@ -3,7 +3,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:parking/widgets/image_uploader.dart';
 import 'package:parking/widgets/post_slot_form.dart';
@@ -150,7 +149,7 @@ class _EditSlotScreenState extends State<EditSlotScreen> {
         'hourly': hourlyController.text,
         'imageUrl': slotImage,
       });
-      Get.back();
+      Navigator.pop(context);
     }
   }
 

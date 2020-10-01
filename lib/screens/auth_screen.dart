@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:parking/screens/map_screen.dart';
-import 'package:get/get.dart';
 import 'package:parking/services/exception_handler.dart';
 import 'package:parking/widgets/primary_button.dart';
 import 'package:parking/widgets/user_auth_form.dart';
@@ -37,7 +36,7 @@ class _AuthScreenState extends State<AuthScreen> {
       body: Container(
         decoration: BoxDecoration(
           image: DecorationImage(
-              image: AssetImage('assets/images/background2.png'),
+              image: AssetImage('assets/images/background.png'),
               colorFilter: ColorFilter.mode(Colors.white70, BlendMode.screen),
               fit: BoxFit.cover),
         ),
@@ -65,11 +64,12 @@ class _AuthScreenState extends State<AuthScreen> {
             ),
             SizedBox(height: 20),
             PrimaryButton(
-                text:
-                    isSignUp ? 'Register'.toUpperCase() : 'Login'.toUpperCase(),
-                onClick: () {
-                  isSignUp ? signup() : signin();
-                }),
+              text: isSignUp ? 'Register'.toUpperCase() : 'Login'.toUpperCase(),
+              onClick: () {
+                isSignUp ? signup() : signin();
+              },
+              big: true,
+            ),
             Spacer(),
             FlatButton(
               onPressed: () {
@@ -102,7 +102,12 @@ class _AuthScreenState extends State<AuthScreen> {
               email: emailController.text.trim(),
               password: passwordController.text.trim());
       if (user != null) {
-        Get.off(MapScreen());
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => MapScreen(),
+          ),
+        );
       }
     } catch (error) {
       setState(() {
@@ -130,7 +135,8 @@ class _AuthScreenState extends State<AuthScreen> {
           'avatarUrl':
               'https://tanzolymp.com/images/default-non-user-no-photo-1.jpg'
         });
-        Get.off(MapScreen());
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (context) => MapScreen()));
       }
     } catch (error) {
       setState(() {
