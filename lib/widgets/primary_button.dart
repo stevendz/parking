@@ -18,9 +18,10 @@ class PrimaryButton extends StatelessWidget {
     return SizedBox(
       width: big ? double.infinity : null,
       child: FlatButton(
-        onPressed: onClick,
+        onPressed: onClick != null ? onClick : null,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         color: color != null ? color : Colors.white,
+        disabledColor: Colors.grey.shade300,
         padding: EdgeInsets.all(big ? 15 : 13),
         child: Text(
           text,

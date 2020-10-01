@@ -38,60 +38,64 @@ class _AuthScreenState extends State<AuthScreen> {
       return MapScreen();
     }
     return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          image: DecorationImage(
-              image: AssetImage('assets/images/background.png'),
-              colorFilter: ColorFilter.mode(
-                  Colors.grey.shade100.withOpacity(0.85), BlendMode.screen),
-              fit: BoxFit.cover),
-        ),
-        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 30),
-        child: Column(
-          children: [
-            SizedBox(height: MediaQuery.of(context).size.height * 0.1),
-            Image.asset(
-              'assets/images/logo_color.png',
-              fit: BoxFit.cover,
-              width: 75,
-              height: 75,
-            ),
-            Spacer(),
-            UserAuthForm(
-              isSignUp: isSignUp,
-              usernameController: usernameController,
-              emailController: emailController,
-              passwordController: passwordController,
-            ),
-            SizedBox(height: 20),
-            Text(
-              errorMessage,
-              style: TextStyle(color: Colors.redAccent),
-            ),
-            SizedBox(height: 20),
-            PrimaryButton(
-              text: isSignUp ? 'Sign up'.toUpperCase() : 'Login'.toUpperCase(),
-              onClick: () {
-                isSignUp ? signup() : signin();
-              },
-              big: true,
-            ),
-            SocialAuthentication(),
-            Spacer(),
-            FlatButton(
-              onPressed: () {
-                setState(() {
-                  errorMessage = '';
-                  isSignUp = !isSignUp;
-                });
-              },
-              child: Text(
-                isSignUp
-                    ? 'Already have an account? Login.'
-                    : 'Don’t have an account? Sign up.',
+      body: SingleChildScrollView(
+        child: Container(
+          height: MediaQuery.of(context).size.height,
+          decoration: BoxDecoration(
+            image: DecorationImage(
+                image: AssetImage('assets/images/background.png'),
+                colorFilter: ColorFilter.mode(
+                    Colors.grey.shade100.withOpacity(0.85), BlendMode.screen),
+                fit: BoxFit.cover),
+          ),
+          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 30),
+          child: Column(
+            children: [
+              SizedBox(height: MediaQuery.of(context).size.height * 0.1),
+              Image.asset(
+                'assets/images/logo_color.png',
+                fit: BoxFit.cover,
+                width: 75,
+                height: 75,
               ),
-            ),
-          ],
+              Spacer(),
+              UserAuthForm(
+                isSignUp: isSignUp,
+                usernameController: usernameController,
+                emailController: emailController,
+                passwordController: passwordController,
+              ),
+              SizedBox(height: 20),
+              Text(
+                errorMessage,
+                style: TextStyle(color: Colors.redAccent),
+              ),
+              SizedBox(height: 20),
+              PrimaryButton(
+                text:
+                    isSignUp ? 'Sign up'.toUpperCase() : 'Login'.toUpperCase(),
+                onClick: () {
+                  isSignUp ? signup() : signin();
+                },
+                big: true,
+              ),
+              SocialAuthentication(),
+              Spacer(),
+              FlatButton(
+                onPressed: () {
+                  setState(() {
+                    errorMessage = '';
+                    isSignUp = !isSignUp;
+                  });
+                },
+                child: Text(
+                  isSignUp
+                      ? 'Already have an account? Login.'
+                      : 'Don’t have an account? Sign up.',
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

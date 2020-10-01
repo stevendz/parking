@@ -102,12 +102,15 @@ class _PostSlotScreenState extends State<PostSlotScreen> {
               ),
             ),
           ),
-          Padding(
-            padding: EdgeInsets.all(20),
-            child: PrimaryButton(
-                text: 'Add new parking slot',
-                onClick: postSlot,
-                color: Theme.of(context).primaryColor),
+          Visibility(
+            visible: MediaQuery.of(context).viewInsets.bottom < 1,
+            child: Padding(
+              padding: EdgeInsets.only(bottom: 20),
+              child: PrimaryButton(
+                  text: 'Add new parking slot',
+                  onClick: postSlot,
+                  color: Theme.of(context).primaryColor),
+            ),
           )
         ],
       ),

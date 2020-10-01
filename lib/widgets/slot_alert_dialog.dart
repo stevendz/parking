@@ -117,7 +117,6 @@ class _SlotAlertDialogState extends State<SlotAlertDialog> {
                     PrimaryButtonBorder(
                       onClick: user.uid != widget.slot['userUid']
                           ? () {
-                              print(user.uid != widget.slot['userUid']);
                               Navigator.pop(context);
                               Navigator.push(
                                 context,

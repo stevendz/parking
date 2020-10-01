@@ -6,6 +6,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:parking/widgets/image_uploader.dart';
 import 'package:parking/widgets/post_slot_form.dart';
+import 'package:parking/widgets/primary_button.dart';
 
 class EditSlotScreen extends StatefulWidget {
   final slot;
@@ -40,13 +41,10 @@ class _EditSlotScreenState extends State<EditSlotScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if (position == null) {
-      return Material(child: Center(child: Text("loading...")));
-    }
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text('Add new slot'),
+        title: Text('Edit slot'),
       ),
       body: Column(
         children: <Widget>[
@@ -91,10 +89,16 @@ class _EditSlotScreenState extends State<EditSlotScreen> {
               ),
             ),
           ),
-          FlatButton(
-            onPressed: postSlot,
-            child: Text('Save changes'),
-            color: Theme.of(context).primaryColor,
+          Visibility(
+            visible: MediaQuery.of(context).viewInsets.bottom < 1,
+            child: Padding(
+              padding: EdgeInsets.only(bottom: 20),
+              child: PrimaryButton(
+                onClick: postSlot,
+                text: 'Save changes',
+                color: Theme.of(context).primaryColor,
+              ),
+            ),
           )
         ],
       ),
