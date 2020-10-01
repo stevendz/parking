@@ -1,10 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:parking/screens/edit_slot_screen.dart';
-import 'package:parking/screens/profile_screen.dart';
 
 class MySlotsScreen extends StatefulWidget {
   @override
