@@ -1,30 +1,30 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:parking/screens/map_screen.dart';
 import 'package:parking/widgets/image_uploader.dart';
 import 'package:parking/widgets/post_slot_form.dart';
-import 'package:uuid/uuid.dart';
 
-class PostSlotScreen extends StatefulWidget {
+class EditSlotScreen extends StatefulWidget {
+  final slot;
+
+  const EditSlotScreen({
+    Key key,
+    this.slot,
+  }) : super(key: key);
   @override
-  _PostSlotScreenState createState() => _PostSlotScreenState();
+  _EditSlotScreenState createState() => _EditSlotScreenState();
 }
 
-class _PostSlotScreenState extends State<PostSlotScreen> {
+class _EditSlotScreenState extends State<EditSlotScreen> {
   StorageReference imgStorage = FirebaseStorage.instance.ref();
-  String uuid = Uuid().v1();
-  Position position;
-  Position selectedPosition;
-  String selectedLocation;
+  var slotData;
+  List<Marker> position = [];
   String slotImage;
-  List<Marker> markers = [];
-  User user;
+  String location = '';
   bool selectImageReminder = false;
 
   TextEditingController titleController = TextEditingController();
@@ -36,10 +36,7 @@ class _PostSlotScreenState extends State<PostSlotScreen> {
   @override
   void initState() {
     super.initState();
-    user = FirebaseAuth.instance.currentUser;
-    selectedPosition = position;
-    selectedLocation = 'Tap on map to select location...';
-    getPosition();
+    preloadSlotData();
   }
 
   @override
@@ -59,12 +56,11 @@ class _PostSlotScreenState extends State<PostSlotScreen> {
             child: Container(
               height: MediaQuery.of(context).size.height * 0.3,
               child: GoogleMap(
-                markers: Set.from(markers),
+                markers: Set.from(position),
                 initialCameraPosition: CameraPosition(
-                  target: LatLng(position.latitude, position.longitude),
+                  target: LatLng(slotData['latitude'], slotData['longitude']),
                   zoom: 14,
                 ),
-                onTap: setPosition,
               ),
             ),
           ),
@@ -75,19 +71,13 @@ class _PostSlotScreenState extends State<PostSlotScreen> {
                 children: <Widget>[
                   Row(
                     children: <Widget>[
-                      Visibility(
-                        visible: selectedPosition != null,
-                        maintainSize: true,
-                        maintainAnimation: true,
-                        maintainState: true,
-                        child: ImageUploader(
-                          image: slotImage,
-                          uploadImage: uploadImage,
-                          selectImageReminder: selectImageReminder,
-                        ),
+                      ImageUploader(
+                        image: slotImage,
+                        uploadImage: uploadImage,
+                        selectImageReminder: selectImageReminder,
                       ),
                       SizedBox(width: 20),
-                      Text(selectedLocation),
+                      Text(location),
                     ],
                   ),
                   Divider(),
@@ -104,7 +94,7 @@ class _PostSlotScreenState extends State<PostSlotScreen> {
           ),
           FlatButton(
             onPressed: postSlot,
-            child: Text('Post parking slot'),
+            child: Text('Save changes'),
             color: Theme.of(context).primaryColor,
           )
         ],
@@ -112,39 +102,31 @@ class _PostSlotScreenState extends State<PostSlotScreen> {
     );
   }
 
-  void getPosition() async {
-    Position position = await Geolocator()
-        .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-    if (position != null) {
-      setState(() {
-        this.position = position;
-      });
-    }
-  }
-
-  void setPosition(tappedPosition) {
-    selectedPosition = Position(
-      latitude: tappedPosition.latitude,
-      longitude: tappedPosition.longitude,
+  void preloadSlotData() {
+    slotData = widget.slot.data();
+    slotImage = slotData['imageUrl'];
+    titleController.text = slotData['title'];
+    dailyController.text = slotData['daily'];
+    hourlyController.text = slotData['hourly'];
+    descriptionController.text = slotData['description'];
+    getLocation();
+    position.add(
+      Marker(
+        markerId: MarkerId(slotData['latitude'].toString()),
+        position: LatLng(
+          slotData['latitude'],
+          slotData['longitude'],
+        ),
+      ),
     );
-    setState(() {
-      markers = [
-        Marker(
-          position:
-              LatLng(selectedPosition.latitude, selectedPosition.longitude),
-          markerId: MarkerId('CurrentSelectedLatLng'),
-        )
-      ];
-      getLocation();
-    });
   }
 
   void getLocation() async {
-    List<Placemark> placemarks = await Geolocator().placemarkFromCoordinates(
-        selectedPosition.latitude, selectedPosition.longitude);
+    List<Placemark> placemarks = await Geolocator()
+        .placemarkFromCoordinates(slotData['latitude'], slotData['longitude']);
     if (placemarks != null && placemarks.isNotEmpty) {
       setState(() {
-        selectedLocation = placemarks[0].thoroughfare +
+        location = placemarks[0].thoroughfare +
             ', ' +
             placemarks[0].postalCode +
             ', ' +
@@ -162,23 +144,18 @@ class _PostSlotScreenState extends State<PostSlotScreen> {
     if (postSlotFormKey.currentState.validate() && slotImage != null) {
       CollectionReference slotsDb =
           FirebaseFirestore.instance.collection('slots');
-      slotsDb.doc(uuid).set({
+      slotsDb.doc(widget.slot.id).update({
         'title': titleController.text,
-        'latitude': selectedPosition.latitude,
-        'longitude': selectedPosition.longitude,
         'daily': dailyController.text,
         'hourly': hourlyController.text,
         'imageUrl': slotImage,
-        'userUid': user.uid,
       });
-      Get.off(MapScreen());
+      Get.back();
     }
   }
 
   void uploadImage(pickedImage) async {
-    String imageId = selectedPosition.latitude.toString() +
-        '_' +
-        position.longitude.toString();
+    String imageId = slotData['position'].toString();
     StorageUploadTask uploadTask =
         imgStorage.child(imageId).putFile(File(pickedImage.path));
 

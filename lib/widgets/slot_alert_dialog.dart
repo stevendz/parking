@@ -1,6 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:get/get.dart';
+import 'package:parking/screens/chat_screen.dart';
 
 class SlotAlertDialog extends StatefulWidget {
   final Map slot;
@@ -14,12 +17,14 @@ class SlotAlertDialog extends StatefulWidget {
 class _SlotAlertDialogState extends State<SlotAlertDialog> {
   String userAvatar;
   String location;
+  User user;
 
   @override
   void initState() {
     super.initState();
     getLocation();
     getUserAvatar();
+    user = FirebaseAuth.instance.currentUser;
   }
 
   @override
@@ -102,12 +107,24 @@ class _SlotAlertDialogState extends State<SlotAlertDialog> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     FlatButton(
-                      onPressed: () {},
+                      onPressed:
+                          user.uid != widget.slot['userUid'] ? () {} : null,
                       child: Text('Book'),
                       color: Theme.of(context).primaryColor,
                     ),
                     FlatButton(
-                      onPressed: () {},
+                      onPressed: user.uid != widget.slot['userUid']
+                          ? () {
+                              print(user.uid != widget.slot['userUid']);
+                              Get.back();
+                              Get.to(
+                                ChatScreen(
+                                  chatPartner: widget.slot['userUid'],
+                                  object: location,
+                                ),
+                              );
+                            }
+                          : null,
                       child: Text('Contact'),
                       color: Theme.of(context).primaryColorLight,
                     )
