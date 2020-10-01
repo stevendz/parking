@@ -23,33 +23,48 @@ class FabMenu extends StatelessWidget {
       ringWidth: 60,
       fabSize: 50.0,
       fabColor: Theme.of(context).primaryColor,
-      fabOpenIcon: Icon(Icons.menu, color: Colors.black),
-      fabCloseIcon: Icon(Icons.close, color: Colors.black),
+      fabOpenIcon: Icon(
+        Icons.menu,
+        color: Colors.white,
+      ),
+      fabCloseIcon: Icon(
+        Icons.close,
+        color: Colors.white,
+      ),
       children: <Widget>[
         RawMaterialButton(
           elevation: 0,
           onPressed: () {
             Get.to(ProfileScreen());
           },
-          fillColor: Theme.of(context).primaryColorLight,
+          fillColor: Colors.white,
           shape: CircleBorder(),
-          child: Icon(Icons.person),
+          child: Icon(
+            Icons.person,
+            color: Theme.of(context).primaryColor,
+          ),
         ),
         RawMaterialButton(
           elevation: 0,
           onPressed: () {
             Get.to(MyChatsScreen());
           },
-          fillColor: Theme.of(context).primaryColorLight,
+          fillColor: Colors.white,
           shape: CircleBorder(),
-          child: Icon(Icons.chat),
+          child: Icon(
+            Icons.chat,
+            color: Theme.of(context).primaryColor,
+          ),
         ),
         RawMaterialButton(
           elevation: 0,
           onPressed: searchLocation,
-          fillColor: Theme.of(context).primaryColorLight,
+          fillColor: Colors.white,
           shape: CircleBorder(),
-          child: Icon(Icons.search),
+          child: Icon(
+            Icons.search,
+            color: Theme.of(context).primaryColor,
+          ),
         ),
         RawMaterialButton(
           elevation: 0,
@@ -60,9 +75,12 @@ class FabMenu extends StatelessWidget {
                   (position) => moveToLocation(position),
                 );
           },
-          fillColor: Theme.of(context).primaryColorLight,
+          fillColor: Colors.white,
           shape: CircleBorder(),
-          child: Icon(Icons.room),
+          child: Icon(
+            Icons.room,
+            color: Theme.of(context).primaryColor,
+          ),
         ),
       ],
     );

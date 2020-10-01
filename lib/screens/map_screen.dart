@@ -43,8 +43,23 @@ class _MapScreenState extends State<MapScreen> {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         centerTitle: true,
-        title: Text(
-          'Hello ' + (username != null ? username : 'No User'),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Image.network(
+              'https://firebasestorage.googleapis.com/v0/b/parking-41df9.appspot.com/o/logo_light.png?alt=media',
+              fit: BoxFit.cover,
+              width: 40,
+              height: 40,
+            ),
+            Text(
+              'parking',
+              style: TextStyle(
+                  fontSize: 35,
+                  color: Colors.white.withOpacity(0.9),
+                  letterSpacing: -3),
+            ),
+          ],
         ),
       ),
       body: GoogleMap(

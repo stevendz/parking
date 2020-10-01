@@ -22,15 +22,18 @@ class UserAuthForm extends StatelessWidget {
           visible: isSignUp,
           child: TextFormField(
             decoration: InputDecoration(labelText: 'Username'),
+            style: TextStyle(fontSize: 20),
             controller: usernameController,
           ),
         ),
         TextFormField(
           decoration: InputDecoration(labelText: 'Email'),
+          style: TextStyle(fontSize: 20),
           controller: emailController,
         ),
         TextFormField(
           decoration: InputDecoration(labelText: 'Password'),
+          style: TextStyle(fontSize: 20),
           obscureText: true,
           controller: passwordController,
         ),

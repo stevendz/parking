@@ -9,6 +9,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:parking/screens/map_screen.dart';
 import 'package:parking/widgets/image_uploader.dart';
 import 'package:parking/widgets/post_slot_form.dart';
+import 'package:parking/widgets/primary_button.dart';
 import 'package:uuid/uuid.dart';
 
 class PostSlotScreen extends StatefulWidget {
@@ -70,7 +71,7 @@ class _PostSlotScreenState extends State<PostSlotScreen> {
           ),
           Expanded(
             child: Padding(
-              padding: EdgeInsets.all(15),
+              padding: EdgeInsets.all(20),
               child: ListView(
                 children: <Widget>[
                   Row(
@@ -102,10 +103,12 @@ class _PostSlotScreenState extends State<PostSlotScreen> {
               ),
             ),
           ),
-          FlatButton(
-            onPressed: postSlot,
-            child: Text('Post parking slot'),
-            color: Theme.of(context).primaryColor,
+          Padding(
+            padding: EdgeInsets.all(20),
+            child: PrimaryButton(
+                text: 'Add new parking slot',
+                onClick: postSlot,
+                color: Theme.of(context).primaryColor),
           )
         ],
       ),

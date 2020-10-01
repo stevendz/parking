@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:parking/screens/map_screen.dart';
 import 'package:get/get.dart';
 import 'package:parking/services/exception_handler.dart';
+import 'package:parking/widgets/primary_button.dart';
 import 'package:parking/widgets/user_auth_form.dart';
 
 class AuthScreen extends StatefulWidget {
@@ -33,31 +34,23 @@ class _AuthScreenState extends State<AuthScreen> {
       return MapScreen();
     }
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Image.network(
-              'https://firebasestorage.googleapis.com/v0/b/parking-41df9.appspot.com/o/logo.png?alt=media',
-              fit: BoxFit.cover,
-              width: 50,
-              height: 50,
-            ),
-            Text(
-              'parking',
-              style: TextStyle(
-                  fontSize: 40, color: Theme.of(context).primaryColor),
-            )
-          ],
+      body: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+              image: AssetImage('assets/images/background2.png'),
+              colorFilter: ColorFilter.mode(Colors.white70, BlendMode.screen),
+              fit: BoxFit.cover),
         ),
-      ),
-      body: Padding(
-        padding: EdgeInsets.all(20),
+        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 30),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            SizedBox(height: MediaQuery.of(context).size.height * 0.15),
+            Image.asset(
+              'assets/images/logo_color.png',
+              fit: BoxFit.cover,
+              width: 75,
+              height: 75,
+            ),
             Spacer(),
             UserAuthForm(
               isSignUp: isSignUp,
@@ -70,34 +63,15 @@ class _AuthScreenState extends State<AuthScreen> {
               errorMessage,
               style: TextStyle(color: Colors.redAccent),
             ),
-            FlatButton(
-              color: Theme.of(context).primaryColor,
-              onPressed: () {
-                isSignUp ? signup() : signin();
-              },
-              child: Text(isSignUp ? 'Register' : 'Login'),
-            ),
-            // Admin login-button for debugging
-            // FlatButton(
-            //   color: Colors.grey.shade300,
-            //   onPressed: () async {
-            //     UserCredential user =
-            //         await FirebaseAuth.instance.signInWithEmailAndPassword(
-            //       email: 'admin@gmail.com',
-            //       password: '123456',
-            //     );
-            //     if (user != null) {
-            //       Get.off(MapScreen());
-            //     }
-            //   },
-            //   child: Text(
-            //     'admin login',
-            //     style: TextStyle(fontSize: 12),
-            //   ),
-            // ),
+            SizedBox(height: 20),
+            PrimaryButton(
+                text:
+                    isSignUp ? 'Register'.toUpperCase() : 'Login'.toUpperCase(),
+                onClick: () {
+                  isSignUp ? signup() : signin();
+                }),
             Spacer(),
             FlatButton(
-              color: Theme.of(context).primaryColorLight,
               onPressed: () {
                 setState(() {
                   errorMessage = '';

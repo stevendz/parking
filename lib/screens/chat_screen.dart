@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:parking/widgets/message_bubble.dart';
+import 'package:parking/widgets/primary_button.dart';
 import 'package:uuid/uuid.dart';
 
 class ChatScreen extends StatefulWidget {
@@ -70,21 +71,28 @@ class _ChatScreenState extends State<ChatScreen> {
                     },
                   ),
                 ),
-                Row(
-                  children: <Widget>[
-                    Expanded(
-                      child: TextField(
-                        controller: chatController,
-                        maxLines: 4,
-                        minLines: 1,
+                Container(
+                  color: Colors.grey.shade300,
+                  padding: EdgeInsets.all(10),
+                  child: Row(
+                    children: <Widget>[
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 10),
+                          child: TextField(
+                            controller: chatController,
+                            maxLines: 4,
+                            minLines: 1,
+                          ),
+                        ),
                       ),
-                    ),
-                    FlatButton(
-                      color: Theme.of(context).primaryColor,
-                      onPressed: sendMessage,
-                      child: Text('send'),
-                    ),
-                  ],
+                      PrimaryButton(
+                        color: Theme.of(context).primaryColor,
+                        onClick: sendMessage,
+                        text: 'send',
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),

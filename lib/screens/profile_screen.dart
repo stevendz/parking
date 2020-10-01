@@ -9,7 +9,9 @@ import 'package:parking/screens/auth_screen.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:parking/screens/my_slots_screen.dart';
 import 'package:parking/screens/post_slot_screen.dart';
+import 'package:parking/widgets/primary_button_border.dart';
 import 'package:parking/widgets/change_username_alert_dialog.dart';
+import 'package:parking/widgets/primary_button.dart';
 
 class ProfileScreen extends StatefulWidget {
   @override
@@ -42,12 +44,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
             resizeToAvoidBottomInset: false,
             appBar: AppBar(
               centerTitle: true,
-              title: Text('Profile'),
+              title: Text(
+                'Profile',
+              ),
             ),
-            body: Center(
+            body: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 30),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   GestureDetector(
                     onTap: () async {
@@ -68,6 +73,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     },
                     child: CircleAvatar(
                       radius: 100,
+                      backgroundColor: Theme.of(context).primaryColorLight,
                       backgroundImage: NetworkImage(data['avatarUrl']),
                     ),
                   ),
@@ -77,28 +83,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   Text(user.email),
                   Divider(),
-                  FlatButton(
-                    color: Theme.of(context).primaryColor,
-                    onPressed: () {
-                      Get.to(PostSlotScreen());
-                    },
-                    child: Text('Add new parking slot'),
-                  ),
-                  FlatButton(
-                    color: Theme.of(context).primaryColorLight,
-                    onPressed: () {
+                  PrimaryButton(
+                      text: 'Add new parking slot',
+                      onClick: () {
+                        Get.to(PostSlotScreen());
+                      },
+                      color: Theme.of(context).primaryColor),
+                  PrimaryButtonBorder(
+                    text: 'Manage parking slots',
+                    onClick: () {
                       Get.to(MySlotsScreen());
                     },
-                    child: Text('Manage parking slots'),
+                    color: Theme.of(context).primaryColor,
                   ),
                   Divider(),
-                  FlatButton(
-                    color: Colors.redAccent,
-                    onPressed: () async {
-                      await FirebaseAuth.instance.signOut();
-                      Get.off(AuthScreen());
+                  PrimaryButton(
+                    text: 'Logout',
+                    onClick: () {
+                      Get.to(PostSlotScreen());
                     },
-                    child: Text('logout'),
+                    color: Colors.redAccent.shade100,
                   ),
                 ],
               ),
@@ -109,6 +113,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
         return Material(child: Center(child: Text("loading...")));
       },
     );
+  }
+
+  void signOut() async {
+    await FirebaseAuth.instance.signOut();
+    Navigator.pushReplacement(
+        context, MaterialPageRoute(builder: (context) => AuthScreen()));
   }
 
   void updateUsername(newUsername) {

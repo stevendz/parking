@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:parking/screens/chat_screen.dart';
+import 'package:parking/widgets/primary_button.dart';
+import 'package:parking/widgets/primary_button_border.dart';
 
 class SlotAlertDialog extends StatefulWidget {
   final Map slot;
@@ -54,6 +56,7 @@ class _SlotAlertDialogState extends State<SlotAlertDialog> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     CircleAvatar(
+                      backgroundColor: Theme.of(context).primaryColorLight,
                       backgroundImage:
                           userAvatar != null ? NetworkImage(userAvatar) : null,
                     ),
@@ -106,14 +109,14 @@ class _SlotAlertDialogState extends State<SlotAlertDialog> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    FlatButton(
-                      onPressed:
+                    PrimaryButton(
+                      onClick:
                           user.uid != widget.slot['userUid'] ? () {} : null,
-                      child: Text('Book'),
+                      text: 'Book',
                       color: Theme.of(context).primaryColor,
                     ),
-                    FlatButton(
-                      onPressed: user.uid != widget.slot['userUid']
+                    PrimaryButtonBorder(
+                      onClick: user.uid != widget.slot['userUid']
                           ? () {
                               print(user.uid != widget.slot['userUid']);
                               Get.back();
@@ -125,8 +128,8 @@ class _SlotAlertDialogState extends State<SlotAlertDialog> {
                               );
                             }
                           : null,
-                      child: Text('Contact'),
-                      color: Theme.of(context).primaryColorLight,
+                      text: 'Contact',
+                      color: Theme.of(context).primaryColor,
                     )
                   ],
                 )

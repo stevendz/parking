@@ -15,7 +15,7 @@ class MessageBubble extends StatelessWidget {
     return Align(
       alignment: myMessage ? Alignment.centerRight : Alignment.centerLeft,
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
         margin: EdgeInsets.all(5),
         decoration: BoxDecoration(
             color: myMessage
@@ -24,6 +24,7 @@ class MessageBubble extends StatelessWidget {
             borderRadius: BorderRadius.circular(50)),
         child: Text(
           message,
+          style: TextStyle(color: myMessage ? Colors.white : Colors.black),
         ),
       ),
     );

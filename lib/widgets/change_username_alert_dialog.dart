@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:parking/widgets/primary_button.dart';
 
 class ChangeUsernameDialog extends StatelessWidget {
   final Function updateUsername;
@@ -26,12 +27,12 @@ class ChangeUsernameDialog extends StatelessWidget {
                   decoration: InputDecoration(labelText: 'New username'),
                 ),
                 SizedBox(height: 10),
-                FlatButton(
-                  color: Theme.of(context).primaryColorLight,
-                  onPressed: () {
+                PrimaryButton(
+                  color: Theme.of(context).primaryColor,
+                  onClick: () {
                     updateUsername(newUsernameController.text);
                   },
-                  child: Text('Save'),
+                  text: 'Save',
                 ),
               ],
             ),
