@@ -51,23 +51,23 @@ class _AuthScreenState extends State<AuthScreen> {
                 child: Text(isSignUp ? 'Register' : 'Login'),
               ),
               // Admin login-button for debugging
-              FlatButton(
-                color: Colors.grey.shade300,
-                onPressed: () async {
-                  UserCredential user =
-                      await FirebaseAuth.instance.signInWithEmailAndPassword(
-                    email: 'admin@gmail.com',
-                    password: '123456',
-                  );
-                  if (user != null) {
-                    Get.off(MapScreen());
-                  }
-                },
-                child: Text(
-                  'admin login',
-                  style: TextStyle(fontSize: 12),
-                ),
-              ),
+              // FlatButton(
+              //   color: Colors.grey.shade300,
+              //   onPressed: () async {
+              //     UserCredential user =
+              //         await FirebaseAuth.instance.signInWithEmailAndPassword(
+              //       email: 'admin@gmail.com',
+              //       password: '123456',
+              //     );
+              //     if (user != null) {
+              //       Get.off(MapScreen());
+              //     }
+              //   },
+              //   child: Text(
+              //     'admin login',
+              //     style: TextStyle(fontSize: 12),
+              //   ),
+              // ),
               Spacer(),
               FlatButton(
                 color: Theme.of(context).primaryColorLight,
@@ -101,7 +101,8 @@ class _AuthScreenState extends State<AuthScreen> {
       }
       UserCredential user = await FirebaseAuth.instance
           .signInWithEmailAndPassword(
-              email: emailController.text, password: passwordController.text);
+              email: emailController.text.trim(),
+              password: passwordController.text.trim());
       if (user != null) {
         Get.off(MapScreen());
       }
@@ -123,7 +124,8 @@ class _AuthScreenState extends State<AuthScreen> {
       }
       UserCredential user = await FirebaseAuth.instance
           .createUserWithEmailAndPassword(
-              email: emailController.text, password: passwordController.text);
+              email: emailController.text.trim(),
+              password: passwordController.text.trim());
       if (user != null) {
         usersDb.doc(user.user.uid).set({
           'username': usernameController.text,

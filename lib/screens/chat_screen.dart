@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:parking/widgets/message_bubble.dart';
 import 'package:uuid/uuid.dart';
 
 class ChatScreen extends StatefulWidget {
@@ -57,21 +58,18 @@ class _ChatScreenState extends State<ChatScreen> {
             ),
             body: Column(
               children: <Widget>[
-                data != null
-                    ? Expanded(
-                        child: ListView.builder(
-                            itemCount: data.length,
-                            itemBuilder: (context, index) {
-                              return data[index]['sender'] == user.uid
-                                  ? Align(
-                                      alignment: Alignment.centerRight,
-                                      child: Text(data[index]['message']))
-                                  : Text(data[index]['message']);
-                            }),
-                      )
-                    : Expanded(
-                        child: Container(),
-                      ),
+                Expanded(
+                  child: ListView.builder(
+                    padding: EdgeInsets.all(5),
+                    itemCount: data != null ? data.length : 0,
+                    itemBuilder: (context, index) {
+                      bool isMyMessage = data[index]['sender'] == user.uid;
+                      return MessageBubble(
+                          message: data[index]['message'],
+                          myMessage: isMyMessage);
+                    },
+                  ),
+                ),
                 Row(
                   children: <Widget>[
                     Expanded(
@@ -83,37 +81,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     ),
                     FlatButton(
                       color: Theme.of(context).primaryColor,
-                      onPressed: () {
-                        if (chatController.text.trim().length > 0) {
-                          if (!exists) {
-                            chatsDb.doc(chatUid).set({
-                              'members': [user.uid, widget.chatPartner],
-                              'object': widget.object,
-                              'messages': FieldValue.arrayUnion([
-                                {
-                                  'message': chatController.text,
-                                  'sender': user.uid,
-                                  'timestamp': DateTime.now()
-                                }
-                              ])
-                            });
-                            exists = true;
-                          } else {
-                            chatsDb.doc(chatUid).update({
-                              'messages': FieldValue.arrayUnion([
-                                {
-                                  'message': chatController.text,
-                                  'sender': user.uid,
-                                  'timestamp': DateTime.now()
-                                }
-                              ])
-                            });
-                          }
-                          setState(() {
-                            chatController.text = '';
-                          });
-                        }
-                      },
+                      onPressed: sendMessage,
                       child: Text('send'),
                     ),
                   ],
@@ -125,5 +93,37 @@ class _ChatScreenState extends State<ChatScreen> {
         return Material(child: Center(child: Text("loading...")));
       },
     );
+  }
+
+  void sendMessage() {
+    if (chatController.text.trim().length > 0) {
+      if (!exists) {
+        chatsDb.doc(chatUid).set({
+          'members': [user.uid, widget.chatPartner],
+          'object': widget.object,
+          'messages': FieldValue.arrayUnion([
+            {
+              'message': chatController.text,
+              'sender': user.uid,
+              'timestamp': DateTime.now()
+            }
+          ])
+        });
+        exists = true;
+      } else {
+        chatsDb.doc(chatUid).update({
+          'messages': FieldValue.arrayUnion([
+            {
+              'message': chatController.text,
+              'sender': user.uid,
+              'timestamp': DateTime.now()
+            }
+          ])
+        });
+      }
+      setState(() {
+        chatController.text = '';
+      });
+    }
   }
 }
