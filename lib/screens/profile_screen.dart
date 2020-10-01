@@ -111,8 +111,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           );
         }
-
-        return Material(child: Center(child: Text("loading...")));
+        return Center(child: CircularProgressIndicator());
       },
     );
   }

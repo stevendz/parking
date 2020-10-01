@@ -19,14 +19,15 @@ class PrimaryButton extends StatelessWidget {
       width: big ? double.infinity : null,
       child: FlatButton(
         onPressed: onClick,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         color: color != null ? color : Colors.white,
         padding: EdgeInsets.all(big ? 15 : 13),
         child: Text(
           text,
           style: TextStyle(
-            color: color != null ? Colors.white : color,
-            fontSize: big ? 18 : 16,
+            color:
+                color != null ? Colors.white : Theme.of(context).primaryColor,
+            fontSize: big ? 18 : 14,
           ),
         ),
       ),

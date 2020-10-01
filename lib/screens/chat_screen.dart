@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:parking/widgets/message_bubble.dart';
-import 'package:parking/widgets/primary_button.dart';
 import 'package:uuid/uuid.dart';
 
 class ChatScreen extends StatefulWidget {
@@ -72,7 +71,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   ),
                 ),
                 Container(
-                  color: Colors.grey.shade300,
+                  color: Colors.grey.shade200,
                   padding: EdgeInsets.all(10),
                   child: Row(
                     children: <Widget>[
@@ -86,11 +85,13 @@ class _ChatScreenState extends State<ChatScreen> {
                           ),
                         ),
                       ),
-                      PrimaryButton(
-                        color: Theme.of(context).primaryColor,
-                        onClick: sendMessage,
-                        text: 'send',
-                      ),
+                      GestureDetector(
+                        onTap: sendMessage,
+                        child: CircleAvatar(
+                          radius: 25,
+                          child: Icon(Icons.send),
+                        ),
+                      )
                     ],
                   ),
                 ),
@@ -98,7 +99,7 @@ class _ChatScreenState extends State<ChatScreen> {
             ),
           );
         }
-        return Material(child: Center(child: Text("loading...")));
+        return Center(child: CircularProgressIndicator());
       },
     );
   }

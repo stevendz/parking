@@ -43,8 +43,12 @@ class SplashScreen extends StatelessWidget {
             PrimaryButtonBorder(
               text: 'Sign Up'.toUpperCase(),
               onClick: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => AuthScreen()));
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => AuthScreen(isSignUp: true),
+                  ),
+                );
               },
               big: true,
             ),
@@ -52,8 +56,12 @@ class SplashScreen extends StatelessWidget {
             PrimaryButton(
               text: 'login'.toUpperCase(),
               onClick: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => AuthScreen()));
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => AuthScreen(),
+                  ),
+                );
               },
               big: true,
             ),

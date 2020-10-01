@@ -27,13 +27,13 @@ class PrimaryButtonBorder extends StatelessWidget {
                 print('No function');
               },
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(50),
+          borderRadius: BorderRadius.circular(10),
         ),
         child: Text(
           text != null ? text : 'text',
           style: TextStyle(
             color: color != null ? color : Colors.white,
-            fontSize: big ? 18 : 16,
+            fontSize: big ? 18 : 14,
           ),
         ),
       ),

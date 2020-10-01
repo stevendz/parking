@@ -4,9 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:parking/screens/map_screen.dart';
 import 'package:parking/services/exception_handler.dart';
 import 'package:parking/widgets/primary_button.dart';
+import 'package:parking/widgets/social_authentication.dart';
 import 'package:parking/widgets/user_auth_form.dart';
 
 class AuthScreen extends StatefulWidget {
+  final bool isSignUp;
+
+  const AuthScreen({Key key, this.isSignUp: false}) : super(key: key);
   @override
   _AuthScreenState createState() => _AuthScreenState();
 }
@@ -16,15 +20,16 @@ class _AuthScreenState extends State<AuthScreen> {
   TextEditingController usernameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
-  bool isSignUp = true;
+  bool isSignUp;
   String errorMessage = '';
 
   @override
   void initState() {
     super.initState();
-    usernameController.text = 'StevenDz';
-    emailController.text = 'contact@stevendz.de';
-    passwordController.text = '123456';
+    isSignUp = widget.isSignUp;
+    // usernameController.text = 'StevenDz';
+    // emailController.text = 'contact@stevendz.de';
+    // passwordController.text = '123456';
   }
 
   @override
@@ -37,13 +42,14 @@ class _AuthScreenState extends State<AuthScreen> {
         decoration: BoxDecoration(
           image: DecorationImage(
               image: AssetImage('assets/images/background.png'),
-              colorFilter: ColorFilter.mode(Colors.white70, BlendMode.screen),
+              colorFilter: ColorFilter.mode(
+                  Colors.grey.shade100.withOpacity(0.85), BlendMode.screen),
               fit: BoxFit.cover),
         ),
         padding: EdgeInsets.symmetric(horizontal: 20, vertical: 30),
         child: Column(
           children: [
-            SizedBox(height: MediaQuery.of(context).size.height * 0.15),
+            SizedBox(height: MediaQuery.of(context).size.height * 0.1),
             Image.asset(
               'assets/images/logo_color.png',
               fit: BoxFit.cover,
@@ -64,12 +70,13 @@ class _AuthScreenState extends State<AuthScreen> {
             ),
             SizedBox(height: 20),
             PrimaryButton(
-              text: isSignUp ? 'Register'.toUpperCase() : 'Login'.toUpperCase(),
+              text: isSignUp ? 'Sign up'.toUpperCase() : 'Login'.toUpperCase(),
               onClick: () {
                 isSignUp ? signup() : signin();
               },
               big: true,
             ),
+            SocialAuthentication(),
             Spacer(),
             FlatButton(
               onPressed: () {
@@ -79,7 +86,9 @@ class _AuthScreenState extends State<AuthScreen> {
                 });
               },
               child: Text(
-                isSignUp ? 'Already an user? Login!' : 'No account? Register!',
+                isSignUp
+                    ? 'Already have an account? Login.'
+                    : 'Don’t have an account? Sign up.',
               ),
             ),
           ],
