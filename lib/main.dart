@@ -8,7 +8,10 @@ import 'package:parking/screens/welcome_back_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // SystemChrome.setEnabledSystemUIOverlays([]);
+  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+    systemNavigationBarColor: Colors.transparent, // navigation bar color
+    statusBarColor: Colors.transparent, // status bar color
+  ));
   await Firebase.initializeApp();
   runApp(MyApp()
       // DevicePreview(
