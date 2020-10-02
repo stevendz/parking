@@ -72,7 +72,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 ),
                 Container(
                   color: Colors.grey.shade200,
-                  padding: EdgeInsets.all(10),
+                  padding: EdgeInsets.all(5),
                   child: Row(
                     children: <Widget>[
                       Expanded(
@@ -88,7 +88,7 @@ class _ChatScreenState extends State<ChatScreen> {
                       GestureDetector(
                         onTap: sendMessage,
                         child: CircleAvatar(
-                          radius: 25,
+                          radius: 20,
                           child: Icon(Icons.send),
                         ),
                       )
