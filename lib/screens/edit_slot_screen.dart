@@ -51,7 +51,7 @@ class _EditSlotScreenState extends State<EditSlotScreen> {
           Visibility(
             visible: MediaQuery.of(context).viewInsets.bottom < 1,
             child: Container(
-              height: MediaQuery.of(context).size.height * 0.3,
+              height: MediaQuery.of(context).size.height * 0.4,
               child: GoogleMap(
                 markers: Set.from(position),
                 initialCameraPosition: CameraPosition(
@@ -64,40 +64,40 @@ class _EditSlotScreenState extends State<EditSlotScreen> {
           Expanded(
             child: Padding(
               padding: EdgeInsets.all(15),
-              child: ListView(
-                children: <Widget>[
-                  Row(
-                    children: <Widget>[
-                      ImageUploader(
-                        image: slotImage,
-                        uploadImage: uploadImage,
-                        selectImageReminder: selectImageReminder,
-                      ),
-                      SizedBox(width: 20),
-                      Text(location),
-                    ],
-                  ),
-                  Divider(),
-                  PostSlotForm(
-                    titleController: titleController,
-                    descriptionController: descriptionController,
-                    hourlyController: hourlyController,
-                    dailyController: dailyController,
-                    formKey: postSlotFormKey,
-                  ),
-                ],
+              child: ConstrainedBox(
+                constraints: BoxConstraints(maxWidth: 400),
+                child: ListView(
+                  children: <Widget>[
+                    Row(
+                      children: <Widget>[
+                        ImageUploader(
+                          image: slotImage,
+                          uploadImage: uploadImage,
+                          selectImageReminder: selectImageReminder,
+                        ),
+                        SizedBox(width: 20),
+                        Text(location),
+                      ],
+                    ),
+                    Divider(),
+                    PostSlotForm(
+                      titleController: titleController,
+                      descriptionController: descriptionController,
+                      hourlyController: hourlyController,
+                      dailyController: dailyController,
+                      formKey: postSlotFormKey,
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
-          Visibility(
-            visible: MediaQuery.of(context).viewInsets.bottom < 1,
-            child: Padding(
-              padding: EdgeInsets.only(bottom: 20),
-              child: PrimaryButton(
-                onClick: postSlot,
-                text: 'Save changes',
-                color: Theme.of(context).primaryColor,
-              ),
+          Padding(
+            padding: EdgeInsets.only(bottom: 20),
+            child: PrimaryButton(
+              onClick: postSlot,
+              text: 'Save changes',
+              color: Theme.of(context).primaryColor,
             ),
           )
         ],

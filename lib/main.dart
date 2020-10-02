@@ -13,21 +13,22 @@ void main() async {
     statusBarColor: Colors.transparent, // status bar color
   ));
   await Firebase.initializeApp();
-  runApp(MyApp()
-      // DevicePreview(
-      //   style: DevicePreviewStyle(
-      //       background: BoxDecoration(color: Colors.white),
-      //       hasFrameShadow: false,
-      //       toolBar: DevicePreviewToolBarStyle(
-      //         backgroundColor: Colors.grey.shade700,
-      //         buttonBackgroundColor: Colors.grey,
-      //         buttonHoverBackgroundColor: Colors.grey,
-      //         foregroundColor: Colors.black,
-      //         position: DevicePreviewToolBarPosition.bottom,
-      //       )),
-      //   builder: (context) => MyApp(),
-      // ),
-      );
+  runApp(
+    // MyApp()
+    DevicePreview(
+      style: DevicePreviewStyle(
+          background: BoxDecoration(color: Colors.white),
+          hasFrameShadow: false,
+          toolBar: DevicePreviewToolBarStyle(
+            backgroundColor: Colors.grey.shade700,
+            buttonBackgroundColor: Colors.grey,
+            buttonHoverBackgroundColor: Colors.grey,
+            foregroundColor: Colors.black,
+            position: DevicePreviewToolBarPosition.bottom,
+          )),
+      builder: (context) => MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatefulWidget {
@@ -40,8 +41,8 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      // locale: DevicePreview.of(context).locale,
-      // builder: DevicePreview.appBuilder,
+      locale: DevicePreview.of(context).locale,
+      builder: DevicePreview.appBuilder,
       debugShowCheckedModeBanner: false,
       title: 'Parking',
       theme: ThemeData(

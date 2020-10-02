@@ -50,8 +50,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 30),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
+                  Spacer(),
                   GestureDetector(
                     onTap: () async {
                       PickedFile pickedImage = await ImagePicker()
@@ -75,12 +75,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       backgroundImage: NetworkImage(data['avatarUrl']),
                     ),
                   ),
+                  Spacer(),
                   ChangeUsernameDialog(
                     updateUsername: updateUsername,
                     username: data['username'],
                   ),
                   Text(user.email),
+                  Spacer(),
+                  Spacer(),
                   Divider(),
+                  Spacer(),
                   PrimaryButton(
                       text: 'Add new parking slot',
                       onClick: () {
@@ -90,6 +94,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 builder: (context) => PostSlotScreen()));
                       },
                       color: Theme.of(context).primaryColor),
+                  Spacer(),
                   PrimaryButtonBorder(
                     text: 'Manage parking slots',
                     onClick: () {
@@ -100,7 +105,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     },
                     color: Theme.of(context).primaryColor,
                   ),
+                  Spacer(),
                   Divider(),
+                  Spacer(),
                   PrimaryButton(
                     text: 'Logout',
                     onClick: signOut,

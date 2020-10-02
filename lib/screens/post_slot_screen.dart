@@ -57,7 +57,7 @@ class _PostSlotScreenState extends State<PostSlotScreen> {
           Visibility(
             visible: MediaQuery.of(context).viewInsets.bottom < 1,
             child: Container(
-              height: MediaQuery.of(context).size.height * 0.3,
+              height: MediaQuery.of(context).size.height * 0.4,
               child: GoogleMap(
                 markers: Set.from(markers),
                 initialCameraPosition: CameraPosition(
@@ -71,45 +71,46 @@ class _PostSlotScreenState extends State<PostSlotScreen> {
           Expanded(
             child: Padding(
               padding: EdgeInsets.all(20),
-              child: ListView(
-                children: <Widget>[
-                  Row(
-                    children: <Widget>[
-                      Visibility(
-                        visible: selectedPosition != null,
-                        maintainSize: true,
-                        maintainAnimation: true,
-                        maintainState: true,
-                        child: ImageUploader(
-                          image: slotImage,
-                          uploadImage: uploadImage,
-                          selectImageReminder: selectImageReminder,
+              child: ConstrainedBox(
+                constraints: BoxConstraints(maxWidth: 400),
+                child: ListView(
+                  children: <Widget>[
+                    Row(
+                      children: <Widget>[
+                        Visibility(
+                          visible: selectedPosition != null,
+                          maintainSize: true,
+                          maintainAnimation: true,
+                          maintainState: true,
+                          child: ImageUploader(
+                            image: slotImage,
+                            uploadImage: uploadImage,
+                            selectImageReminder: selectImageReminder,
+                          ),
                         ),
-                      ),
-                      SizedBox(width: 20),
-                      Text(selectedLocation),
-                    ],
-                  ),
-                  Divider(),
-                  PostSlotForm(
-                    titleController: titleController,
-                    descriptionController: descriptionController,
-                    hourlyController: hourlyController,
-                    dailyController: dailyController,
-                    formKey: postSlotFormKey,
-                  ),
-                ],
+                        SizedBox(width: 20),
+                        Text(selectedLocation),
+                      ],
+                    ),
+                    Divider(),
+                    PostSlotForm(
+                      titleController: titleController,
+                      descriptionController: descriptionController,
+                      hourlyController: hourlyController,
+                      dailyController: dailyController,
+                      formKey: postSlotFormKey,
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
-          Visibility(
-            visible: MediaQuery.of(context).viewInsets.bottom < 1,
-            child: Padding(
-              padding: EdgeInsets.only(bottom: 20),
-              child: PrimaryButton(
-                  text: 'Add new parking slot',
-                  onClick: postSlot,
-                  color: Theme.of(context).primaryColor),
+          Padding(
+            padding: EdgeInsets.only(bottom: 20),
+            child: PrimaryButton(
+              text: 'Add new parking slot',
+              onClick: postSlot,
+              color: Theme.of(context).primaryColor,
             ),
           )
         ],

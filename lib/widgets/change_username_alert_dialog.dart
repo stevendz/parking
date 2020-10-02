@@ -45,7 +45,10 @@ class ChangeUsernameDialog extends StatelessWidget {
         children: <Widget>[
           Padding(
             padding: EdgeInsets.all(3),
-            child: Text(username),
+            child: Text(
+              username,
+              style: TextStyle(fontSize: 18),
+            ),
           ),
           Icon(
             Icons.edit,
