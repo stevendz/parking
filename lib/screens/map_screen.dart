@@ -5,6 +5,7 @@ import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:parking/widgets/fab_menu.dart';
+import 'package:parking/widgets/please_login_alert.dart';
 import 'package:parking/widgets/slot_alert_dialog.dart';
 import 'package:google_maps_webservice/places.dart';
 import '../credentials.dart';
@@ -90,6 +91,8 @@ class _MapScreenState extends State<MapScreen> {
         floatingActionButton: FabMenu(
           moveToLocation: moveToLocation,
           searchLocation: searchLocation,
+          noAccess: noAccess,
+          isGuest: isGuest,
         ),
       );
     }
@@ -115,6 +118,10 @@ class _MapScreenState extends State<MapScreen> {
         moveToLocation(location);
       }
     }
+  }
+
+  noAccess() {
+    showDialog(context: context, builder: (context) => PleaseLoginDialog());
   }
 
   loadSlots() async {

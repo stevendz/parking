@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:parking/screens/chat_screen.dart';
+import 'package:parking/widgets/please_login_alert.dart';
 import 'package:parking/widgets/primary_button.dart';
 import 'package:parking/widgets/primary_button_border.dart';
 
@@ -109,14 +110,28 @@ class _SlotAlertDialogState extends State<SlotAlertDialog> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     PrimaryButton(
-                      onClick:
-                          user.uid != widget.slot['userUid'] ? () {} : null,
+                      onClick: user.uid != widget.slot['userUid']
+                          ? () {
+                              if (user.isAnonymous) {
+                                showDialog(
+                                    context: context,
+                                    builder: (context) => PleaseLoginDialog());
+                                return;
+                              }
+                            }
+                          : null,
                       text: 'Book',
                       color: Theme.of(context).primaryColor,
                     ),
                     PrimaryButtonBorder(
                       onClick: user.uid != widget.slot['userUid']
                           ? () {
+                              if (user.isAnonymous) {
+                                showDialog(
+                                    context: context,
+                                    builder: (context) => PleaseLoginDialog());
+                                return;
+                              }
                               Navigator.pop(context);
                               Navigator.push(
                                 context,

@@ -7,10 +7,14 @@ import 'package:parking/screens/profile_screen.dart';
 class FabMenu extends StatelessWidget {
   final Function moveToLocation;
   final Function searchLocation;
+  final Function noAccess;
+  final bool isGuest;
   const FabMenu({
     Key key,
     @required this.moveToLocation,
     @required this.searchLocation,
+    @required this.noAccess,
+    @required this.isGuest,
   }) : super(key: key);
 
   @override
@@ -33,14 +37,16 @@ class FabMenu extends StatelessWidget {
       children: <Widget>[
         RawMaterialButton(
           elevation: 0,
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => ProfileScreen(),
-              ),
-            );
-          },
+          onPressed: isGuest
+              ? noAccess
+              : () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ProfileScreen(),
+                    ),
+                  );
+                },
           fillColor: Colors.white,
           shape: CircleBorder(),
           child: Icon(
@@ -50,14 +56,16 @@ class FabMenu extends StatelessWidget {
         ),
         RawMaterialButton(
           elevation: 0,
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => MyChatsScreen(),
-              ),
-            );
-          },
+          onPressed: isGuest
+              ? noAccess
+              : () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => MyChatsScreen(),
+                    ),
+                  );
+                },
           fillColor: Colors.white,
           shape: CircleBorder(),
           child: Icon(
