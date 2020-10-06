@@ -32,19 +32,6 @@ class _MapScreenState extends State<MapScreen> {
     preloadData();
   }
 
-  preloadData() async {
-    isLoading = true;
-    Position newPosition = await Geolocator()
-        .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-    if (newPosition != null) {
-      await loadSlots();
-      setState(() {
-        position = newPosition;
-      });
-      isLoading = false;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     isGuest = user.isAnonymous;
@@ -120,11 +107,24 @@ class _MapScreenState extends State<MapScreen> {
     }
   }
 
-  noAccess() {
+  Future<void> preloadData() async {
+    isLoading = true;
+    Position newPosition = await Geolocator()
+        .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    if (newPosition != null) {
+      await loadSlots();
+      setState(() {
+        position = newPosition;
+      });
+      isLoading = false;
+    }
+  }
+
+  void noAccess() {
     showDialog(context: context, builder: (context) => PleaseLoginDialog());
   }
 
-  loadSlots() async {
+  Future<void> loadSlots() async {
     await slotsDb.get().then(
           (QuerySnapshot querySnapshot) => {
             querySnapshot.docs.forEach(
@@ -152,7 +152,7 @@ class _MapScreenState extends State<MapScreen> {
         );
   }
 
-  moveToLocation(newLocation) async {
+  Future<void> moveToLocation(newLocation) async {
     if (newLocation != null) {
       await mapController.animateCamera(
         CameraUpdate.newCameraPosition(

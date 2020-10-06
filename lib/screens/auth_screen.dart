@@ -115,7 +115,7 @@ class _AuthScreenState extends State<AuthScreen> {
     );
   }
 
-  void signin() async {
+  Future<void> signin() async {
     try {
       if (emailController.text.trim().length < 6 ||
           passwordController.text.trim().length < 6) {
@@ -143,7 +143,7 @@ class _AuthScreenState extends State<AuthScreen> {
     }
   }
 
-  void signup() async {
+  Future<void> signup() async {
     try {
       if (emailController.text.trim().length < 6 ||
           passwordController.text.trim().length < 3) {

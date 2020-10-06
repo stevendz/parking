@@ -118,7 +118,7 @@ class _PostSlotScreenState extends State<PostSlotScreen> {
     );
   }
 
-  void getPosition() async {
+  Future<void> getPosition() async {
     Position position = await Geolocator()
         .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
     if (position != null) {
@@ -145,7 +145,7 @@ class _PostSlotScreenState extends State<PostSlotScreen> {
     });
   }
 
-  void getLocation() async {
+  Future<void> getLocation() async {
     List<Placemark> placemarks = await Geolocator().placemarkFromCoordinates(
         selectedPosition.latitude, selectedPosition.longitude);
     if (placemarks != null && placemarks.isNotEmpty) {
@@ -182,7 +182,7 @@ class _PostSlotScreenState extends State<PostSlotScreen> {
     }
   }
 
-  void uploadImage(pickedImage) async {
+  Future<void> uploadImage(pickedImage) async {
     String imageId = selectedPosition.latitude.toString() +
         '_' +
         position.longitude.toString();

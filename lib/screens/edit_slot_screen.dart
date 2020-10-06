@@ -124,7 +124,7 @@ class _EditSlotScreenState extends State<EditSlotScreen> {
     );
   }
 
-  void getLocation() async {
+  Future<void> getLocation() async {
     List<Placemark> placemarks = await Geolocator()
         .placemarkFromCoordinates(slotData['latitude'], slotData['longitude']);
     if (placemarks != null && placemarks.isNotEmpty) {
@@ -157,7 +157,7 @@ class _EditSlotScreenState extends State<EditSlotScreen> {
     }
   }
 
-  void uploadImage(pickedImage) async {
+  Future<void> uploadImage(pickedImage) async {
     String imageId = slotData['position'].toString();
     StorageUploadTask uploadTask =
         imgStorage.child(imageId).putFile(File(pickedImage.path));

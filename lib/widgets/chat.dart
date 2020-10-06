@@ -25,33 +25,33 @@ class _ChatState extends State<Chat> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future: usersDb.doc(widget.chatPartner).get(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
-          } else {
-            return ListTile(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ChatScreen(
-                      chatPartner: snapshot.data.data()['username'],
-                      chatId: widget.id,
-                      object: widget.object,
-                    ),
+      future: usersDb.doc(widget.chatPartner).get(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator());
+        } else {
+          return ListTile(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ChatScreen(
+                    chatPartner: snapshot.data.data()['username'],
+                    chatId: widget.id,
+                    object: widget.object,
                   ),
-                );
-              },
-              leading: CircleAvatar(
-                backgroundColor: Theme.of(context).primaryColorLight,
-                backgroundImage:
-                    NetworkImage(snapshot.data.data()['avatarUrl']),
-              ),
-              title: Text(widget.object),
-              subtitle: Text(snapshot.data.data()['username']),
-            );
-          }
-        });
+                ),
+              );
+            },
+            leading: CircleAvatar(
+              backgroundColor: Theme.of(context).primaryColorLight,
+              backgroundImage: NetworkImage(snapshot.data.data()['avatarUrl']),
+            ),
+            title: Text(widget.object),
+            subtitle: Text(snapshot.data.data()['username']),
+          );
+        }
+      },
+    );
   }
 }

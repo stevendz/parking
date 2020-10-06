@@ -29,16 +29,17 @@ class PleaseLoginDialog extends StatelessWidget {
             text: 'Login',
           ),
           FlatButton(
-              onPressed: () async {
-                await FirebaseAuth.instance.signOut();
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => AuthScreen(isSignUp: true),
-                  ),
-                );
-              },
-              child: Text('Or signup now'))
+            onPressed: () async {
+              await FirebaseAuth.instance.signOut();
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => AuthScreen(isSignUp: true),
+                ),
+              );
+            },
+            child: Text('Or signup now'),
+          ),
         ],
       ),
     );

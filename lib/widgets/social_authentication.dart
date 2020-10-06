@@ -49,14 +49,8 @@ class SocialAuthentication extends StatelessWidget {
             Expanded(
               child: PrimaryButton(
                 text: 'Guest',
-                onClick: () async {
-                  UserCredential user =
-                      await FirebaseAuth.instance.signInAnonymously();
-                  if (user != null) {
-                    print(user);
-                    Navigator.pushReplacement(context,
-                        MaterialPageRoute(builder: (context) => MapScreen()));
-                  }
+                onClick: () {
+                  signUpAsGuest(context);
                 },
                 color: Theme.of(context).primaryColorLight,
               ),
@@ -67,7 +61,16 @@ class SocialAuthentication extends StatelessWidget {
     );
   }
 
-  void signUpInWithGoogle(context) async {
+  Future<void> signUpAsGuest(context) async {
+    UserCredential user = await FirebaseAuth.instance.signInAnonymously();
+    if (user != null) {
+      print(user);
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => MapScreen()));
+    }
+  }
+
+  Future<void> signUpInWithGoogle(context) async {
     CollectionReference usersDb =
         FirebaseFirestore.instance.collection('users');
     final GoogleSignInAccount googleSignInAccount =

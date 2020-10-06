@@ -21,14 +21,6 @@ class _WelcomeBackScreenState extends State<WelcomeBackScreen> {
     super.initState();
   }
 
-  void resetGuestAccess() async {
-    if (user.isAnonymous) {
-      await FirebaseAuth.instance.signOut();
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => SplashScreen()));
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
@@ -134,5 +126,13 @@ class _WelcomeBackScreenState extends State<WelcomeBackScreen> {
         }
       },
     );
+  }
+
+  Future<void> resetGuestAccess() async {
+    if (user.isAnonymous) {
+      await FirebaseAuth.instance.signOut();
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => SplashScreen()));
+    }
   }
 }

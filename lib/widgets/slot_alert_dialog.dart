@@ -154,7 +154,7 @@ class _SlotAlertDialogState extends State<SlotAlertDialog> {
           );
   }
 
-  void getLocation() async {
+  Future<void> getLocation() async {
     try {
       List<Placemark> placemarks = await Geolocator().placemarkFromCoordinates(
           widget.slot["latitude"], widget.slot["longitude"]);
@@ -172,7 +172,7 @@ class _SlotAlertDialogState extends State<SlotAlertDialog> {
     }
   }
 
-  void getUserAvatar() async {
+  Future<void> getUserAvatar() async {
     String userUid = widget.slot['userUid'];
     String url = await FirebaseFirestore.instance
         .collection('users')

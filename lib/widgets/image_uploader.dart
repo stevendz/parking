@@ -38,7 +38,7 @@ class ImageUploader extends StatelessWidget {
     );
   }
 
-  void upload() async {
+  Future<void> upload() async {
     PickedFile pickedImage =
         await ImagePicker().getImage(source: ImageSource.gallery);
     if (pickedImage != null) {

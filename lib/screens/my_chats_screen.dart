@@ -19,11 +19,6 @@ class _MyChatsScreenState extends State<MyChatsScreen> {
     user = FirebaseAuth.instance.currentUser;
   }
 
-  getChatPartner(chatPartners) {
-    chatPartners.removeWhere((item) => item == user.uid);
-    return chatPartners[0];
-  }
-
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
@@ -55,5 +50,10 @@ class _MyChatsScreenState extends State<MyChatsScreen> {
         return Material(child: Center(child: Text("loading...")));
       },
     );
+  }
+
+  String getChatPartner(chatPartners) {
+    chatPartners.removeWhere((item) => item == user.uid);
+    return chatPartners[0];
   }
 }
