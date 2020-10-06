@@ -31,6 +31,7 @@ class ChangeUsernameDialog extends StatelessWidget {
                   color: Theme.of(context).primaryColor,
                   onClick: () {
                     updateUsername(newUsernameController.text);
+                    // Navigator.pop(context);
                   },
                   text: 'Save',
                 ),

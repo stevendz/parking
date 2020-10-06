@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:parking/main.dart';
 import 'package:parking/screens/auth_screen.dart';
+import 'package:parking/screens/splash_screen.dart';
 import 'package:parking/widgets/primary_button.dart';
 
 class WelcomeBackScreen extends StatefulWidget {
@@ -14,6 +15,20 @@ class _WelcomeBackScreenState extends State<WelcomeBackScreen> {
   static CollectionReference usersDb =
       FirebaseFirestore.instance.collection('users');
   User user = FirebaseAuth.instance.currentUser;
+
+  void initState() {
+    resetGuestAccess();
+    super.initState();
+  }
+
+  void resetGuestAccess() async {
+    if (user.isAnonymous) {
+      await FirebaseAuth.instance.signOut();
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => SplashScreen()));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
@@ -22,6 +37,9 @@ class _WelcomeBackScreenState extends State<WelcomeBackScreen> {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(child: CircularProgressIndicator());
         } else {
+          var username = snapshot.data.data() != null
+              ? snapshot.data.data()['username']
+              : 'null';
           return Scaffold(
             body: Stack(
               alignment: Alignment.center,
@@ -76,7 +94,7 @@ class _WelcomeBackScreenState extends State<WelcomeBackScreen> {
                         SizedBox(height: 35),
                         PrimaryButton(
                           text: 'continue as '.toUpperCase() +
-                              snapshot.data.data()['username'].toUpperCase(),
+                              username.toUpperCase(),
                           onClick: () {
                             Navigator.pushReplacement(
                               context,
@@ -99,7 +117,7 @@ class _WelcomeBackScreenState extends State<WelcomeBackScreen> {
                             );
                           },
                           child: Text(
-                            'Not ${snapshot.data.data()['username']}? Login now.',
+                            'Not $username? Login now.',
                             style: TextStyle(
                               color: Colors.white,
                             ),

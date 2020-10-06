@@ -39,6 +39,7 @@ class _AuthScreenState extends State<AuthScreen> {
     }
     return Scaffold(
       resizeToAvoidBottomInset: false,
+      extendBody: true,
       body: Stack(
         alignment: Alignment.center,
         children: <Widget>[

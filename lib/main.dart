@@ -9,12 +9,12 @@ import 'package:parking/screens/welcome_back_screen.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-    systemNavigationBarColor: Colors.transparent, // navigation bar color
-    statusBarColor: Colors.transparent, // status bar color
+    systemNavigationBarColor: Colors.transparent,
+    statusBarColor: Colors.transparent,
   ));
   await Firebase.initializeApp();
   runApp(
-    // MyApp()
+    // MyApp(),
     DevicePreview(
       style: DevicePreviewStyle(
           background: BoxDecoration(color: Colors.white),
@@ -38,6 +38,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   User user = FirebaseAuth.instance.currentUser;
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

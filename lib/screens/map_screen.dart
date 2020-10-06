@@ -17,13 +17,13 @@ class MapScreen extends StatefulWidget {
 class _MapScreenState extends State<MapScreen> {
   Position position;
   User user = FirebaseAuth.instance.currentUser;
-  String username;
   List<Marker> markers = [];
   GoogleMapController mapController;
   CollectionReference slotsDb = FirebaseFirestore.instance.collection('slots');
   CollectionReference usersDb = FirebaseFirestore.instance.collection('users');
   GoogleMapsPlaces places = GoogleMapsPlaces(apiKey: kGoogleApiKey);
   bool isLoading = false;
+  bool isGuest = true;
 
   @override
   void initState() {
@@ -33,21 +33,20 @@ class _MapScreenState extends State<MapScreen> {
 
   preloadData() async {
     isLoading = true;
-    await Geolocator()
-        .getCurrentPosition(desiredAccuracy: LocationAccuracy.high)
-        .then(
-      (position) {
-        position = position;
-        moveToLocation(position);
-      },
-    );
-    loadSlots();
-    getUsername();
-    isLoading = false;
+    Position newPosition = await Geolocator()
+        .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    if (newPosition != null) {
+      await loadSlots();
+      setState(() {
+        position = newPosition;
+      });
+      isLoading = false;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    isGuest = user.isAnonymous;
     if (isLoading) {
       return Center(child: CircularProgressIndicator());
     }
@@ -85,7 +84,7 @@ class _MapScreenState extends State<MapScreen> {
           },
           initialCameraPosition: CameraPosition(
             target: LatLng(position.latitude, position.longitude),
-            zoom: 14,
+            zoom: 12,
           ),
         ),
         floatingActionButton: FabMenu(
@@ -108,15 +107,18 @@ class _MapScreenState extends State<MapScreen> {
     if (prediction != null) {
       PlacesDetailsResponse details =
           await places.getDetailsByPlaceId(prediction.placeId);
-      moveToLocation(Position(
-        latitude: details.result.geometry.location.lat,
-        longitude: details.result.geometry.location.lng,
-      ));
+      if (details != null) {
+        Position location = Position(
+          latitude: details.result.geometry.location.lat,
+          longitude: details.result.geometry.location.lng,
+        );
+        moveToLocation(location);
+      }
     }
   }
 
-  void loadSlots() {
-    slotsDb.get().then(
+  loadSlots() async {
+    await slotsDb.get().then(
           (QuerySnapshot querySnapshot) => {
             querySnapshot.docs.forEach(
               (slot) {
@@ -143,35 +145,22 @@ class _MapScreenState extends State<MapScreen> {
         );
   }
 
-  void moveToLocation(newPosition) async {
-    if (newPosition != null) {
-      setState(() {
-        this.position = newPosition;
-      });
-      mapController.animateCamera(
+  moveToLocation(newLocation) async {
+    if (newLocation != null) {
+      await mapController.animateCamera(
         CameraUpdate.newCameraPosition(
           CameraPosition(
             zoom: 14,
             target: LatLng(
-              position.latitude,
-              position.longitude,
+              newLocation.latitude,
+              newLocation.longitude,
             ),
           ),
         ),
       );
-      return;
+      setState(() {
+        position = newLocation;
+      });
     }
-    print('No Location');
-  }
-
-  void getUsername() async {
-    String username = await FirebaseFirestore.instance
-        .collection('users')
-        .doc(user.uid)
-        .get()
-        .then((value) => value.data()['username']);
-    setState(() {
-      this.username = username;
-    });
   }
 }
