@@ -86,22 +86,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   Divider(),
                   Spacer(),
                   PrimaryButton(
-                      text: 'Add new parking slot',
+                      text: 'Add new parking space',
                       onClick: () {
                         Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => PostSlotScreen()));
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => PostSlotScreen(),
+                          ),
+                        );
                       },
                       color: Theme.of(context).primaryColor),
                   Spacer(),
                   PrimaryButtonBorder(
-                    text: 'Manage parking slots',
+                    text: 'Manage parking spaces',
                     onClick: () {
                       Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => MySlotsScreen()));
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => MySlotsScreen(),
+                        ),
+                      );
                     },
                     color: Theme.of(context).primaryColor,
                   ),

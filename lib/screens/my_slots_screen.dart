@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:parking/screens/edit_slot_screen.dart';
+import 'package:parking/widgets/confirm_delete_dialog.dart';
 
 class MySlotsScreen extends StatefulWidget {
   @override
@@ -37,7 +38,7 @@ class _MySlotsScreenState extends State<MySlotsScreen> {
               title: Text('Profile'),
             ),
             body: data.length == 0
-                ? Center(child: Text('You have no active slots'))
+                ? Center(child: Text('You have no active parking spaces'))
                 : ListView.builder(
                     padding: EdgeInsets.all(10),
                     itemCount: data.length,
@@ -58,8 +59,7 @@ class _MySlotsScreenState extends State<MySlotsScreen> {
                                 );
                               }
                               if (direction == DismissDirection.endToStart) {
-                                print(data[index].data());
-                                // slotsDb.doc(data[index].id).delete();
+                                confirmDelete(data[index].id);
                               }
                             },
                             background: Container(
@@ -104,5 +104,10 @@ class _MySlotsScreenState extends State<MySlotsScreen> {
         return Material(child: Center(child: Text("loading...")));
       },
     );
+  }
+
+  void confirmDelete(id) {
+    showDialog(
+        context: context, builder: (context) => ConfirmDeleteDialog(id: id));
   }
 }

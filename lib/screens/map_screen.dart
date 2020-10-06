@@ -6,8 +6,8 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:parking/widgets/fab_menu.dart';
 import 'package:parking/widgets/please_login_alert.dart';
-import 'package:parking/widgets/slot_alert_dialog.dart';
 import 'package:google_maps_webservice/places.dart';
+import 'package:parking/widgets/slot_alert_dialog.dart';
 import '../credentials.dart';
 
 class MapScreen extends StatefulWidget {
@@ -107,6 +107,10 @@ class _MapScreenState extends State<MapScreen> {
     }
   }
 
+  void noAccess() {
+    showDialog(context: context, builder: (context) => PleaseLoginDialog());
+  }
+
   Future<void> preloadData() async {
     isLoading = true;
     Position newPosition = await Geolocator()
@@ -118,10 +122,6 @@ class _MapScreenState extends State<MapScreen> {
       });
       isLoading = false;
     }
-  }
-
-  void noAccess() {
-    showDialog(context: context, builder: (context) => PleaseLoginDialog());
   }
 
   Future<void> loadSlots() async {
