@@ -13,6 +13,6 @@
 – Edit parking spaces   
 
 ## Screenshots
-<img src='https://firebasestorage.googleapis.com/v0/b/parking-41df9.appspot.com/o/authentication.png?alt=media' width='50%'><img src='https://firebasestorage.googleapis.com/v0/b/parking-41df9.appspot.com/o/chat.png?alt=media' width='50%'>
+<img src='https://firebasestorage.googleapis.com/v0/b/parking-41df9.appspot.com/o/authentication.png?alt=media' width='33.33%'><img src='https://firebasestorage.googleapis.com/v0/b/parking-41df9.appspot.com/o/chat.png?alt=media' width='33.33%'><img src='https://firebasestorage.googleapis.com/v0/b/parking-41df9.appspot.com/o/search.png?alt=media' width='33.33%'>
 
 <img src='https://firebasestorage.googleapis.com/v0/b/parking-41df9.appspot.com/o/map_profile.png?alt=media' width='100%'>
