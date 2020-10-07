@@ -8,7 +8,7 @@
 | Fully responsive | Flutter |
 | Authentication with email or Google | Dart |
 | Display map with current location | Firebase Authentication |
-| Search for specific city-location | Firestore |
+| Search for specific city-location | Cloud Firestore |
 | Chat | GeoLocation |
 | Edit profile | Google Maps |
 | Post parking spaces | Google Places |
