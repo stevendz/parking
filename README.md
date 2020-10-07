@@ -2,7 +2,7 @@
 
 <img src='https://firebasestorage.googleapis.com/v0/b/parking-41df9.appspot.com/o/responsive.png?alt=media' width='100%'>
 
-| # Features | # Technologys used |
+| # Features implemented: | # Technologys used: |
 | --------------- | --------------- |
 | <img src='https://www.girlscoutsiowa.org/content/dam/girlscouts-girlscoutsiowa/images/miscellaneous/line.jpg' width='50%' height='1px'> | <img src='https://www.girlscoutsiowa.org/content/dam/girlscouts-girlscoutsiowa/images/miscellaneous/line.jpg' width='50%' height='1px'> |
 | Fully responsive | Flutter |
