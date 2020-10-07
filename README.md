@@ -12,7 +12,7 @@
 | Chat | GeoLocation |
 | Edit profile | Google Maps |
 | Post parking spaces | Google Places |
-| Edit parking spaces |  |
+| Edit/delte parking spaces with swipe left/right|  |
 
 
 ## Screenshots
